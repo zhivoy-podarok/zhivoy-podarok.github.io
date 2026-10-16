@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Тебе подарили живой подарок</title>
+<meta name="description" content="Открой, чтобы увидеть, как распустится твой цветок. Внутри — сертификат, который ждёт своего часа.">
+<meta name="theme-color" content="#0f261d">
+
+<!-- Link preview in Telegram, WhatsApp, iMessage, VK -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Живой подарок">
+<meta property="og:title" content="Тебе подарили живой подарок 🌹">
+<meta property="og:description" content="Открой, чтобы увидеть, как распустится твой цветок. Внутри — сертификат, который ждёт своего часа.">
+<meta property="og:url" content="https://zhivoy-podarok.github.io/gift/">
+<meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
+<meta property="og:image:secure_url" content="https://zhivoy-podarok.github.io/img/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Красная стеклянная роза под колпаком">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Тебе подарили живой подарок 🌹">
+<meta name="twitter:description" content="Открой, чтобы увидеть, как распустится твой цветок.">
+<meta name="twitter:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500&family=Cormorant+Garamond:ital,wght@1,400&display=swap">
+<style>
+:root{--screen:#0f261d;--ink:#14111a;--w70:rgba(255,255,255,.7);--w20:rgba(255,255,255,.2);
+  --gold-1:#fff3d1;--gold-2:#f4cf7c;--gold-3:#e0a24f;--top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px);
+  color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--screen);color:#fff;font:500 14px "Manrope",system-ui,sans-serif;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;
+  padding:calc(var(--top) + 16px) max(16px,env(safe-area-inset-right,0px)) calc(var(--bot) + 16px) max(16px,env(safe-area-inset-left,0px))}
+body::before{content:"";position:fixed;left:-100px;top:-160px;width:600px;height:460px;pointer-events:none;
+  background:radial-gradient(ellipse 424px 390px at 300px 184px,rgba(181,111,36,.2),rgba(181,111,36,0) 62%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 160px,#000 330px);mask-image:linear-gradient(to bottom,transparent 160px,#000 330px)}
+.wrap{position:relative;width:100%;max-width:420px;flex:1;min-height:0;display:flex;flex-direction:column;gap:16px}
+.card{position:relative;flex:1;min-height:0;border-radius:24px;border:1px solid var(--w20);overflow:hidden;background:#051a17}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:50%;background:linear-gradient(to bottom,rgba(23,58,71,0),#051a17)}
+.tag{position:absolute;left:12px;top:12px;z-index:2;height:24px;padding:0 8px;border-radius:100px;display:flex;align-items:center;
+  font-size:12px;color:var(--ink);background:linear-gradient(128deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3))}
+.msg{position:absolute;left:14px;right:14px;bottom:16px;z-index:2;display:flex;flex-direction:column;gap:8px}
+h1{margin:0;font-weight:400;font-size:32px;line-height:36px;text-wrap:balance}
+h1 em{font-family:"Cormorant Garamond","Times New Roman",serif;font-weight:400;font-size:44px;line-height:40px}
+.msg p{margin:0;color:var(--w70);text-wrap:balance}
+.cta{flex:none;width:100%;height:52px;border-radius:100px;border:1px solid var(--w20);display:flex;align-items:center;justify-content:space-between;
+  padding:8px 8px 8px 16px;font:500 16px "Manrope",system-ui,sans-serif;color:var(--ink);cursor:pointer;
+  background:linear-gradient(135deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3));box-shadow:inset 0 1px 0 rgba(255,255,255,.8);transition:transform .15s}
+.cta:active{transform:scale(.98)}
+.cta span{flex:1;text-align:center}
+.cta i{flex:none;width:40px;height:40px;border-radius:50%;background:var(--screen);display:flex;align-items:center;justify-content:center;color:#fff}
+.toast{position:fixed;left:50%;top:calc(var(--top) + 12px);transform:translate(-50%,-30px);opacity:0;padding:10px 16px;border-radius:100px;
+  background:rgba(40,40,42,.92);font-size:14px;white-space:nowrap;transition:transform .4s cubic-bezier(.32,.72,0,1),opacity .3s;pointer-events:none}
+.toast.on{transform:translate(-50%,0);opacity:1}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="card">
+    <img src="../img/rose_link.jpg" alt="Красная стеклянная роза под колпаком">
+    <div class="tag">Живой подарок</div>
+    <div class="msg">
+      <h1>Тебе подарили <em>живой подарок</em></h1>
+      <p>Коснись колпака, чтобы цветок распустился. Внутри — сертификат, который ждёт своего часа.</p>
+    </div>
+  </div>
+  <button class="cta" id="open" type="button"><span>Открыть подарок</span><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></i></button>
+</main>
+<div class="toast" id="toast">Сценарий получателя — следующий шаг прототипа</div>
+<script>
+document.getElementById('open').addEventListener('click',()=>{const t=document.getElementById('toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400);});
+</script>
+</body>
+</html>

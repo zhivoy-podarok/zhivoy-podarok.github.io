@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f261d">
+<style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Живой подарок · Даритель</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap">
+<style>
+/* Layout: one iPhone-size screen (393×852), iOS push transitions between steps; share sheet rises over the last step */
+:root{
+  color-scheme:dark;
+  --stage:#0a120e;
+  --screen:#0f261d;
+  --ink:#14111a;
+  --white:#ffffff;
+  --w70:rgba(255,255,255,.7);
+  --w20:rgba(255,255,255,.2);
+  --w12:rgba(255,255,255,.12);
+  --accent:#fbe7bf;
+  --gold-1:#fff3d1;--gold-2:#f4cf7c;--gold-3:#e0a24f;
+  --light-1:#fffaf0;--light-2:#f6e3b6;
+  --card-b:rgba(200,225,208,.22);
+  --card-1:rgba(150,180,160,.24);--card-2:rgba(120,148,127,.12);
+  --warm-b:rgba(255,222,160,.24);
+  --sheet:rgba(28,28,30,.94);
+  --sheet-group:rgba(58,58,62,.72);
+  --sheet-sep:rgba(255,255,255,.1);
+  --sheet-sub:rgba(235,235,245,.6);
+  --font-ui:"Manrope",system-ui,sans-serif;
+  --font-display:"Cormorant Garamond","Times New Roman",serif;
+  --font-ios:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+}
+html,body{height:100%}
+body{background:var(--stage);color:var(--white);display:flex;align-items:center;justify-content:center;overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+button{font:inherit;border:0;background:none;color:inherit;padding:0;cursor:pointer}
+button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
+
+.fit{width:393px;height:852px;flex:none;position:relative;transform-origin:center center}
+.phone{position:relative;width:393px;height:852px;background:var(--screen);border-radius:44px;overflow:hidden;isolation:isolate;
+  box-shadow:0 0 0 10px #1b1d1c,0 0 0 11px #2e3230,0 40px 80px rgba(0,0,0,.6);font-family:var(--font-ui)}
+@media (max-width:440px){ body{padding:0} .phone{border-radius:0;box-shadow:none} }
+
+/* status bar + home indicator, shared */
+.status{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 52px;z-index:15;font-family:var(--font-ios);pointer-events:none}
+.status b{font-size:17px;font-weight:600;letter-spacing:-.2px}
+.levels{display:flex;gap:6px;align-items:center}
+.home{position:absolute;left:127px;right:127px;bottom:8px;height:5px;border-radius:100px;background:var(--white);z-index:30;pointer-events:none}
+
+/* screens + push transition */
+.scr{position:absolute;inset:0;background:var(--screen);overflow:hidden;transform:translateX(100%);visibility:hidden;
+  transition:transform .48s cubic-bezier(.32,.72,0,1),visibility 0s .48s}
+.scr.cur{transform:none;visibility:visible;transition:transform .48s cubic-bezier(.32,.72,0,1),visibility 0s}
+.scr.left{transform:translateX(-28%);visibility:visible}
+.scr.instant{transition:none!important}
+.scr::after{content:"";position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .48s;z-index:9}
+.scr.left::after{opacity:.35}
+.glow{position:absolute;left:-100px;top:-160px;width:600px;height:460px;pointer-events:none;
+  background:radial-gradient(ellipse 424px 390px at 300px 184px,rgba(181,111,36,.2),rgba(181,111,36,0) 62%)}
+.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(50px);background:radial-gradient(circle,rgba(181,111,36,.32),rgba(181,111,36,0) 62%)}
+.scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:54px 0 128px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+
+/* header */
+.prog{display:flex;align-items:center;gap:8px;padding:12px 16px 0}
+.segs{flex:1;display:flex;gap:2px}
+.segs i{flex:1;height:4px;border-radius:100px;background:var(--w12);transition:background .3s}
+.segs i.on{background:linear-gradient(156deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3))}
+.prog span{font-size:12px;font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+.head{display:flex;flex-direction:column;gap:8px;padding:12px 16px 0;text-align:center}
+.head h1{margin:0;font-weight:400;font-size:32px;line-height:36px;text-wrap:balance}
+.head p{margin:0;font-size:14px;font-weight:500;opacity:.7;text-wrap:balance}
+
+/* surfaces */
+.glass{position:relative;border:1px solid var(--card-b);background:linear-gradient(160deg,var(--card-1),var(--card-2));box-shadow:inset 0 1px 0 var(--w12);
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px)}
+.light{background:linear-gradient(130deg,var(--light-1),var(--light-2));color:var(--ink);box-shadow:0 0 30px rgba(244,190,100,.3)}
+
+/* bottom nav */
+.bnav{position:absolute;left:0;right:0;bottom:0;z-index:8;padding:0 16px 40px;display:flex;gap:10px;align-items:center}
+.bnav::before{content:"";position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(to bottom,rgba(15,38,29,0),var(--screen) 55%);pointer-events:none;z-index:-1}
+.back{flex:none;width:52px;height:52px;border-radius:100px;background:var(--w12);border:1.24px solid var(--w20);display:flex;align-items:center;justify-content:center;
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);transition:transform .15s}
+.back:active{transform:scale(.94)}
+.cta{flex:1;min-width:0;height:52px;border-radius:100px;border:1px solid var(--w20);display:flex;align-items:center;justify-content:space-between;
+  padding:8px 8px 8px 16px;font:500 16px var(--font-ui);color:var(--ink);
+  background:linear-gradient(135deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3));
+  box-shadow:0 12px 34px rgba(244,180,90,.4),inset 0 1px 0 rgba(255,255,255,.8);transition:transform .15s,opacity .2s,filter .2s}
+.cta:active{transform:scale(.98)}
+.cta[aria-disabled="true"]{opacity:.5;box-shadow:none;cursor:default}
+.cta[aria-disabled="true"]:active{transform:none}
+.cta .lbl{flex:1;text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cta .ic{flex:none;width:40px;height:40px;border-radius:50%;background:var(--screen);display:flex;align-items:center;justify-content:center;color:var(--white)}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* 1 · intro */
+.intro{padding:12px 16px 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.intro h1{margin:0;align-self:stretch;font-weight:400;font-size:32px;line-height:36px}
+.intro h1 span{color:var(--accent)}
+.hero{width:359px;height:392px;border-radius:20px;object-fit:cover;display:block}
+.introBody{position:relative;margin-top:-90px;width:361px;display:flex;flex-direction:column;gap:20px}
+.duo{display:flex;gap:8px}
+.duo>div{flex:1;min-width:0;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.lab{display:flex;justify-content:space-between;align-items:center}
+.lab small{font-size:12px;font-weight:500;opacity:.5;letter-spacing:.3px}
+.dot{width:24px;height:24px;border-radius:50%;background:var(--screen);display:flex;align-items:center;justify-content:center;color:#fff}
+.duo p{margin:0;font-size:14px;font-weight:500;color:#000}
+.stack{width:95px;height:32px;display:block}
+.together{border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.together small{font-size:12px;font-weight:500;color:var(--w70);opacity:.5;letter-spacing:.3px}
+.together p{margin:0;font-size:14px;font-weight:500;line-height:1.37}
+.feats{display:flex;flex-direction:column;gap:12px}
+.feat{display:flex;gap:8px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--w20)}
+.feat:last-child{border-bottom:0;padding-bottom:0}
+.fi{flex:none;width:32px;height:32px;border-radius:50%;border:.76px solid var(--w20);background:linear-gradient(118deg,var(--light-1),var(--light-2));display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.feat div{display:flex;flex-direction:column;gap:2px}
+.feat small{font-size:12px;font-weight:500;color:var(--w70);letter-spacing:.3px}
+.feat span{font-size:14px;font-weight:500}
+
+/* 2 · brands */
+.brands{display:grid;grid-template-columns:176px 176px;gap:8px;padding:20px 16px}
+.brand{height:130px;border-radius:16px;padding:4px;display:flex;flex-direction:column;gap:4px;text-align:left;transition:transform .15s}
+.brand:active{transform:scale(.97)}
+.brand .bimg{flex:1;min-height:0;border-radius:12px;border:1px solid var(--w20);overflow:hidden}
+.brand .bimg img{width:100%;height:100%;object-fit:cover;display:block}
+.brand .amt{padding-left:4px;display:flex;flex-direction:column;gap:2px;font-size:12px;font-weight:500}
+.brand .amt small{font-size:12px;color:var(--w70)}
+.brand.light .amt small{color:var(--ink)}
+.brand.glass{-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* 3 · amount */
+.bigBrand{margin:20px 16px;height:195px;border-radius:24px;border:1px solid var(--w20);overflow:hidden;position:relative}
+.bigBrand img{width:100%;height:100%;object-fit:cover;display:block}
+.sub{padding:0 16px;font-size:18px;font-weight:600;margin:0 0 12px}
+.amts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 8px;padding:0 16px}
+.amtb{height:52px;border-radius:16px;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;transition:transform .15s,opacity .2s}
+.amtb:active{transform:scale(.96)}
+.amtb.light{border:0}
+.amtb[disabled]{opacity:.28;cursor:not-allowed}
+.note{padding:12px 16px 0;font-size:12px;font-weight:500;color:var(--w70);min-height:16px}
+
+/* 4 · type */
+.types{display:flex;flex-direction:column;gap:8px;padding:20px 16px}
+.type{border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:6px;text-align:left;transition:transform .15s}
+.type:active{transform:scale(.985)}
+.type b{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:24px;line-height:26px}
+.type span{font-size:14px;font-weight:500;color:var(--w70)}
+.type.light{border:1px solid var(--warm-b)}
+.type.light span{color:var(--ink)}
+
+/* 5 · traits */
+.grp{padding:20px 16px;display:flex;flex-direction:column;gap:12px}
+.grpH{display:flex;justify-content:space-between;align-items:center}
+.grpH b{font-size:16px;font-weight:500}
+.grpH span{font-size:14px;opacity:.7;font-variant-numeric:tabular-nums;transition:color .2s}
+.grpH span.full{color:var(--accent);opacity:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{height:42px;padding:0 16px;border-radius:100px;font-size:14px;font-weight:500;display:flex;align-items:center;white-space:nowrap;transition:transform .15s}
+.chip:active{transform:scale(.95)}
+.chip.light{border:1px solid var(--warm-b)}
+
+/* 6 · payment */
+.pay{padding:20px 16px;display:flex;flex-direction:column;gap:20px}
+.prod{height:346px;border-radius:24px;border:1px solid var(--w20);display:flex;flex-direction:column;padding-bottom:16px;position:relative;overflow:hidden}
+.prod .pimg{flex:1;min-height:0;border-radius:23px 23px 0 0;overflow:hidden}
+.prod .pimg img{width:100%;height:100%;object-fit:cover;display:block}
+.tag{position:absolute;left:12px;top:12px;z-index:2;height:24px;padding:0 8px;border-radius:100px;display:flex;align-items:center;font-size:12px;font-weight:500;color:var(--ink);
+  background:linear-gradient(128deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3))}
+.prow{display:flex;justify-content:space-between;align-items:center;padding:12px 16px 0;gap:12px}
+.prow div{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:500;min-width:0}
+.prow div span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow em{font-family:var(--font-display);font-size:32px;line-height:38px;white-space:nowrap}
+.price{display:flex;flex-direction:column;gap:12px}
+.price>b{font-size:16px;font-weight:500}
+.pbox{border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.pitems{display:flex;flex-direction:column;gap:4px;padding-bottom:12px;border-bottom:1px solid var(--w20)}
+.pl{display:flex;justify-content:space-between;align-items:flex-start}
+.pl span{font-size:14px;font-weight:500;color:var(--w70);opacity:.7}
+.pl em{font-family:var(--font-display);font-weight:500;font-size:24px;line-height:26px;color:var(--accent);white-space:nowrap}
+
+/* 7 · link ready */
+.ready{position:absolute;top:54px;left:0;right:0;height:706px;display:flex;align-items:center;justify-content:center;padding:20px 16px}
+.card{position:relative;width:361px;height:596px;border-radius:24px;border:1px solid var(--w20);background:linear-gradient(112deg,var(--light-1),var(--light-2));display:flex;flex-direction:column;overflow:hidden}
+.card .photo{position:relative;flex:1;overflow:hidden;border-radius:23px}
+.card .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
+.card .photo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:47%;background:linear-gradient(to bottom,rgba(23,58,71,0),#051a17)}
+.msg{position:absolute;left:12px;right:12px;bottom:14px;z-index:2;display:flex;flex-direction:column;gap:6px}
+.msg h2{margin:0;font-weight:400;font-size:32px;line-height:36px;text-wrap:balance}
+.msg h2 em{font-family:var(--font-display);font-weight:400;font-size:44px;line-height:40px}
+.msg p{margin:0;font-size:14px;font-weight:500;color:var(--w70)}
+.linkrow{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 16px;gap:12px}
+.linkrow span{font-size:14px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.round{flex:none;width:42px;height:42px;border-radius:100px;background:var(--screen);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .15s}
+.round:active{transform:scale(.92)}
+
+/* ===== iOS share sheet (UIActivityViewController look & behaviour) ===== */
+.phone{background:#000}
+.app{position:absolute;inset:0;overflow:hidden;background:var(--screen);transform-origin:50% 0;will-change:transform;
+  transition:transform .5s cubic-bezier(.32,.72,0,1),border-radius .5s cubic-bezier(.32,.72,0,1)}
+.app.drag{transition:none}
+.scrim{position:absolute;inset:0;z-index:20;background:#000;opacity:0;pointer-events:none;transition:opacity .5s cubic-bezier(.32,.72,0,1)}
+.scrim.on{pointer-events:auto}
+.scrim.drag{transition:none}
+.sheet{--sh:790px;position:absolute;left:0;right:0;bottom:0;height:var(--sh);z-index:21;
+  background:rgba(30,30,32,.86);-webkit-backdrop-filter:blur(40px) saturate(1.8);backdrop-filter:blur(40px) saturate(1.8);
+  border-radius:13px 13px 0 0;font-family:var(--font-ios);color:#fff;-webkit-font-smoothing:antialiased;
+  transform:translateY(calc(var(--sh) + 20px));transition:transform .5s cubic-bezier(.32,.72,0,1);
+  display:flex;flex-direction:column;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 -1px 0 rgba(255,255,255,.06)}
+.sheet.drag{transition:none}
+.grab{flex:none;height:16px;display:flex;justify-content:center;padding-top:5px;cursor:grab}
+.grab i{width:36px;height:5px;border-radius:2.5px;background:rgba(235,235,245,.3)}
+.shead{flex:none;display:flex;align-items:center;gap:12px;padding:6px 16px 14px;border-bottom:.33px solid rgba(84,84,88,.65)}
+.thumb{width:48px;height:48px;border-radius:9px;overflow:hidden;flex:none;background:#000;box-shadow:0 0 0 .5px rgba(255,255,255,.12)}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block;pointer-events:none}
+.stext{flex:1;min-width:0}
+.stext b{display:block;font-size:15px;font-weight:600;letter-spacing:-.24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stext span{display:block;font-size:13px;letter-spacing:-.08px;color:rgba(235,235,245,.6);margin-top:2px}
+.stext span button{color:inherit;font:inherit}
+.x{width:30px;height:30px;border-radius:50%;background:rgba(118,118,128,.24);display:flex;align-items:center;justify-content:center;flex:none;color:rgba(235,235,245,.6)}
+.x:active{background:rgba(118,118,128,.4)}
+.sbody{flex:1;min-height:0;overflow:hidden;scrollbar-width:none;overscroll-behavior:contain}
+.sbody::-webkit-scrollbar{display:none}
+.sheet.large .sbody{overflow-y:auto;touch-action:pan-y}
+.row{display:flex;gap:16px;padding:16px 16px 13px;overflow-x:auto;scrollbar-width:none;border-bottom:.33px solid rgba(84,84,88,.65);touch-action:pan-x;scroll-snap-type:x proximity;scroll-padding-inline:16px}
+.row::-webkit-scrollbar{display:none}
+.tap{flex:none;width:60px;display:flex;flex-direction:column;align-items:center;gap:7px;color:#fff;text-decoration:none;font-size:11px;letter-spacing:.06px;line-height:13px;text-align:center;scroll-snap-align:start;-webkit-tap-highlight-color:transparent}
+.tap>span:first-child{transition:filter .12s}
+.tap:active>span:first-child{filter:brightness(.6)}
+.ava{position:relative;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:500;color:#fff}
+.ava .badge{position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:6px;box-shadow:0 0 0 2px rgba(30,30,32,1);display:flex;align-items:center;justify-content:center}
+.app-i{width:60px;height:60px;border-radius:13.5px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08)}
+.sgrp{margin:16px 16px 0;border-radius:10px;background:rgba(118,118,128,.24);overflow:hidden}
+.act{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;font-size:17px;letter-spacing:-.43px;text-align:left;color:#fff;position:relative}
+.act+.act::before{content:"";position:absolute;left:16px;right:0;top:0;height:.33px;background:rgba(84,84,88,.65)}
+.act:active{background:rgba(255,255,255,.1)}
+.act svg{flex:none;color:#fff}
+.editActs{display:block;margin:20px 16px 40px;color:#0a84ff;font-size:17px;letter-spacing:-.43px}
+.editActs:active{opacity:.5}
+
+/* toast */
+.toast{position:absolute;left:50%;top:60px;z-index:40;transform:translate(-50%,-30px);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:100px;white-space:nowrap;
+  background:rgba(40,40,42,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  font:500 14px var(--font-ios);color:var(--white);box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .4s cubic-bezier(.32,.72,0,1),opacity .3s}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.toast i{width:18px;height:18px;border-radius:50%;background:#30d158;display:flex;align-items:center;justify-content:center;flex:none}
+
+.tap{text-decoration:none}
+
+
+/* ===== Real phone: full-screen app instead of a mock-up ===== */
+@media (max-width:500px){
+  :root{--top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px)}
+  html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+  body{padding:0;display:block;background:var(--screen)}
+  .fit{width:100%;height:100%;transform:none!important}
+  .phone{width:100%;height:100%;border-radius:0;box-shadow:none}
+  .status,.home,.under{display:none}
+  /* no downward gold glow under the button: Safari's bottom bar would cut it into a band */
+  .cta{box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+  /* keep the side glows clear of the bottom fade so it never cuts them into a band */
+  .orb{transform:translateY(calc(-1 * (var(--bot) + 140px)))}
+  /* fade the warm glow out toward the top so it meets Safari's flat status-bar tint without a seam */
+  .glow{-webkit-mask-image:linear-gradient(to bottom,transparent 160px,#000 330px);mask-image:linear-gradient(to bottom,transparent 160px,#000 330px)}
+  .scroll{padding-top:calc(var(--top) + 8px);padding-bottom:calc(var(--bot) + 150px)}
+  .bnav{padding-bottom:calc(var(--bot) + 12px)}
+  .bnav::before{height:calc(var(--bot) + 140px);background:linear-gradient(to bottom,rgba(15,38,29,0) 0%,rgba(15,38,29,.12) 15%,rgba(15,38,29,.3) 28%,rgba(15,38,29,.52) 40%,rgba(15,38,29,.72) 52%,rgba(15,38,29,.87) 63%,rgba(15,38,29,.96) 73%,var(--screen) 82%)}
+  .intro{padding-top:4px}
+  .hero{width:100%;height:auto;aspect-ratio:359/392;max-width:100%}
+  .introBody{width:100%}
+  .brands{grid-template-columns:1fr 1fr}
+  .brand{width:auto}
+  .ready{top:calc(var(--top) + 8px);bottom:calc(var(--bot) + 76px);height:auto;padding:12px 16px}
+  .card{width:100%;height:min(596px,100%)}
+  .toast{top:calc(var(--top) + 12px)}
+  .sheet{border-radius:13px 13px 0 0}
+  .sbody{padding-bottom:var(--bot)}
+}
+
+/* outside the phone */
+.under{position:absolute;left:0;right:0;top:calc(100% + 22px);display:flex;justify-content:center;gap:16px;align-items:center;font:500 12px var(--font-ui);color:rgba(255,255,255,.42)}
+.under button{color:rgba(255,255,255,.7);text-decoration:underline;text-underline-offset:3px}
+@media (max-width:440px){.under{display:none}}
+@media (prefers-reduced-motion:reduce){.scr,.sheet,.scrim,.toast,.scr::after{transition-duration:.01s!important}}
+</style>
+
+<div class="fit" id="fit">
+<div class="phone" id="phone">
+
+  <div class="status" aria-hidden="true">
+    <b>9:41</b>
+    <div class="levels">
+      <svg width="19" height="12" viewBox="0 0 19 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 2.4c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8.5.7 10.2 10.2 0 0 0 1.3 3.6l1.2 1.2a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2a6.8 6.8 0 0 0-9.6 0l1.2 1.2c1-.9 2.2-1.4 3.6-1.4Zm0 3.4c.5 0 .9.2 1.2.5L8.5 11 7.3 9.7c.3-.3.7-.5 1.2-.5Z"/></svg>
+      <svg width="28" height="13" viewBox="0 0 28 13"><rect x=".5" y=".5" width="24" height="12" rx="3.8" fill="none" stroke="#fff" stroke-opacity=".35"/><rect x="2.5" y="2.5" width="20" height="8" rx="2.2" fill="#fff"/><path d="M26 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" fill="#fff" fill-opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <div class="app" id="app">
+  <!-- 1 · Создать подарок -->
+  <section class="scr cur" id="s-intro" aria-label="Создать подарок">
+    <div class="glow"></div>
+    <div class="scroll">
+      <div class="intro">
+        <h1>Сертификат, который станет <span>личным подарком</span></h1>
+        <img class="hero" alt="Конверт с сертификатом «Ждёт своего часа» среди цветов" src="img/hero.jpg">
+        <div class="introBody">
+          <div class="duo">
+            <div class="light">
+              <div class="lab"><small>ВНУТРИ</small><span class="dot">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span></div>
+              <p>Сертификат магазина на ваш выбор</p>
+              <img class="stack" alt="Логотипы брендов-партнёров" src="img/brand_stack.png">
+            </div>
+            <div class="light">
+              <div class="lab"><small>СНАРУЖИ</small><span class="dot">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.2 0 4 1.8 4 4 0 .7-.2 1.3-.5 1.9.6-.3 1.2-.5 1.9-.5 2.2 0 4 1.8 4 4s-1.8 4-4 4c-.7 0-1.3-.2-1.9-.5.3.6.5 1.2.5 1.9 0 2.2-1.8 4-4 4s-4-1.8-4-4c0-.7.2-1.3.5-1.9-.6.3-1.2.5-1.9.5-2.2 0-4-1.8-4-4s1.8-4 4-4c.7 0 1.3.2 1.9.5C8.2 7.3 8 6.7 8 6c0-2.2 1.8-4 4-4Z"/></svg></span></div>
+              <p>Цифровой цветок с собственной ДНК, собранной из того, что вы цените в человеке</p>
+            </div>
+          </div>
+          <div class="together glass">
+            <small>ВМЕСТЕ</small>
+            <p>Первые гены задаёте вы, остальные добавит получатель. Второго такого цветка не будет. Он распускается при открытии и каждый день меняется, а сертификат ждёт своего часа.</p>
+          </div>
+          <div class="feats">
+            <div class="feat"><span class="fi"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M10 2l1.8 5.6L17.5 9l-5.7 1.6L10 16l-1.8-5.4L2.5 9l5.7-1.4Z"/><path d="M18.5 13l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9Z"/></svg></span>
+              <div><small>ВАШ ВЗГЛЯД НА ЧЕЛОВЕКА</small><span>Станет характером цветка</span></div></div>
+            <div class="feat"><span class="fi"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.2 0 4 1.8 4 4 0 .7-.2 1.3-.5 1.9.6-.3 1.2-.5 1.9-.5 2.2 0 4 1.8 4 4s-1.8 4-4 4c-.7 0-1.3-.2-1.9-.5.3.6.5 1.2.5 1.9 0 2.2-1.8 4-4 4s-4-1.8-4-4c0-.7.2-1.3.5-1.9-.6.3-1.2.5-1.9.5-2.2 0-4-1.8-4-4s1.8-4 4-4c.7 0 1.3.2 1.9.5C8.2 7.3 8 6.7 8 6c0-2.2 1.8-4 4-4Z"/></svg></span>
+              <div><small>ЦВЕТОК РАСТЁТ ОТ ВНИМАНИЯ</small><span>Каждый день немного другой</span></div></div>
+            <div class="feat"><span class="fi"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8C10 4 7 4 7 6.2S10 8 12 8Zm0 0c2-4 5-4 5-1.8S14 8 12 8Z"/></svg></span>
+              <div><small>ЦЕННОСТЬ РЯДОМ</small><span>Сертификат можно забрать в любой момент</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="bnav">
+      <button class="cta" data-next="s-brand"><span class="lbl">Подарить за минуту</span><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></button>
+    </nav>
+  </section>
+
+  <!-- 2 · Выбор бренда -->
+  <section class="scr" id="s-brand" aria-label="Выбор бренда">
+    <div class="glow"></div>
+    <div class="scroll">
+      <div class="prog"><div class="segs" data-step="1"></div><span>Шаг 1 из 5</span></div>
+      <div class="head"><h1>Любимый бренд —<br>в сердце цветка</h1><p>Выберите бренд, сертификат которого получит человек</p></div>
+      <div class="brands" id="brands"></div>
+    </div>
+    <nav class="bnav"><button class="cta" data-next="s-amount"><span class="lbl">Далее</span><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></button></nav>
+  </section>
+
+  <!-- 3 · Выбор номинала -->
+  <section class="scr" id="s-amount" aria-label="Выбор номинала">
+    <div class="glow"></div>
+    <div class="scroll">
+      <div class="prog"><div class="segs" data-step="2"></div><span>Шаг 2 из 5</span></div>
+      <div class="head"><h1>Сколько вложить в ваш цветок?</h1><p>Получатель узнает сумму только после того, как цветок раскроется</p></div>
+      <div class="bigBrand"><img id="bigBrandImg" alt=""></div>
+      <p class="sub">Сумма</p>
+      <div class="amts" id="amts"></div>
+      <div class="note" id="amtNote"></div>
+    </div>
+    <nav class="bnav"><button class="back" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button><button class="cta" data-next="s-type"><span class="lbl">Далее</span><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></button></nav>
+  </section>
+
+  <!-- 4 · Выбор типа подарка -->
+  <section class="scr" id="s-type" aria-label="Выбор типа подарка">
+    <div class="glow"></div>
+    <div class="orb" style="width:160px;height:160px;right:-30px;bottom:297px"></div>
+    <div class="orb" style="width:200px;height:200px;left:-40px;bottom:137px"></div>
+    <div class="scroll">
+      <div class="prog"><div class="segs" data-step="3"></div><span>Шаг 3 из 5</span></div>
+      <div class="head"><h1>Кому вы дарите?</h1><p>Любовь, дружба, благодарность: у каждого цветка свой характер</p></div>
+      <div class="types" id="types"></div>
+    </div>
+    <nav class="bnav"><button class="back" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button><button class="cta" data-next="s-traits"><span class="lbl">Далее</span><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></button></nav>
+  </section>
+
+  <!-- 5 · Качества подарка -->
+  <section class="scr" id="s-traits" aria-label="Качества подарка">
+    <div class="glow"></div>
+    <div class="orb" style="width:160px;height:160px;right:-30px;bottom:280px"></div>
+    <div class="orb" style="width:200px;height:200px;left:-40px;bottom:120px"></div>
+    <div class="scroll">
+      <div class="prog"><div class="segs" data-step="4"></div><span>Шаг 4 из 5</span></div>
+      <div class="head"><h1>Три черты, которые вы цените</h1><p>Они станут характером цветка и проявятся в его форме</p></div>
+      <div class="grp"><div class="grpH"><b>Форма бутона</b><span id="cntBud">2/2</span></div><div class="chips" id="chipsBud"></div></div>
+      <div class="grp"><div class="grpH"><b>Форма лепестков</b><span id="cntPet">1/1</span></div><div class="chips" id="chipsPet"></div></div>
+    </div>
+    <nav class="bnav"><button class="back" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button><button class="cta" id="traitsNext" data-next="s-pay"><span class="lbl">Далее</span><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></button></nav>
+  </section>
+
+  <!-- 6 · Оплата -->
+  <section class="scr" id="s-pay" aria-label="Оплата">
+    <div class="glow"></div>
+    <div class="scroll">
+      <div class="prog"><div class="segs" data-step="5"></div><span>Шаг 5 из 5</span></div>
+      <div class="head"><h1>Цветок готов<br>к вручению!</h1></div>
+      <div class="pay">
+        <div class="prod light">
+          <div class="pimg"><img alt="Стеклянная роза под колпаком" src="img/rose_pay.jpg"></div>
+          <div class="tag" id="payType">Романтический</div>
+          <div class="prow"><div><span>Сертификат внутри</span><span id="payBrand">Золотое Яблоко</span></div><em id="payAmount">15 000 ₽</em></div>
+        </div>
+        <div class="price">
+          <b>Цена</b>
+          <div class="pbox glass">
+            <div class="pitems">
+              <div class="pl"><span>Сертификат</span><em id="pCert">15 000 ₽</em></div>
+              <div class="pl"><span>Подарок внутри</span><em>300 ₽</em></div>
+            </div>
+            <div class="pl"><span>Итог</span><em id="pTotal">15 300 ₽</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="bnav"><button class="back" aria-label="Назад"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button><button class="cta" id="payBtn"><span class="lbl" id="payLbl">Оплатить 15 300 ₽</span><span class="ic" id="payIc"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></button></nav>
+  </section>
+
+  <!-- 7 · Ссылка готова -->
+  <section class="scr" id="s-ready" aria-label="Ссылка готова">
+    <div class="glow"></div>
+    <div class="ready">
+      <span id="linkText" hidden>https://zhivoy-podarok.github.io/gift/</span>
+      <div class="card">
+        <div class="photo"><img id="roseImg" alt="Красная стеклянная роза под колпаком" src="img/rose_link.jpg"></div>
+        <div class="tag">Подарок оплачен</div>
+        <div class="msg">
+          <h2>Цветок ждёт <em>своего человека</em></h2>
+          <p>Поделитесь ссылкой в мессенджере. Остальное он сделает сам.</p>
+        </div>
+      </div>
+    </div>
+    <nav class="bnav">
+      <button class="cta" id="shareBtn"><span class="lbl">Поделиться</span><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 11H6.5A2.5 2.5 0 0 0 4 13.5v5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 17.5 11H16"/></svg></span></button>
+    </nav>
+  </section>
+
+  </div>
+
+  <!-- iOS share sheet -->
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Поделиться" aria-hidden="true">
+    <div class="grab" id="grab"><i></i></div>
+    <div class="shead" id="shead">
+      <div class="thumb"><img id="thumbImg" alt=""></div>
+      <div class="stext"><b>Тебе подарили живой подарок</b><span>zhivoy-podarok.github.io · <button data-toast="Параметры">Параметры&nbsp;›</button></span></div>
+      <button class="x" id="closeBtn" aria-label="Закрыть"><svg width="11" height="11" viewBox="0 0 12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>
+    </div>
+    <div class="sbody" id="sbody">
+      <div class="row">
+        <button class="tap" data-send="AirDrop"><span class="app-i" style="background:linear-gradient(180deg,#56c4fb,#0a7dfe)">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 25a11 11 0 1 1 16 0"/><path d="M12.5 21.5a6 6 0 1 1 9 0"/><circle cx="17" cy="17" r="1.8" fill="#fff" stroke="none"/><path d="M17 20v7"/></svg></span>AirDrop</button>
+        <button class="tap" data-send="Лена"><span class="ava" style="background:linear-gradient(180deg,#a5a5ab,#6e6e74)">Л<span class="badge" style="background:#34c759"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 5 3.7 6.5L5 21l3.6-1.8c1 .3 2.2.5 3.4.5 5.5 0 10-3.8 10-8.5S17.5 3 12 3Z"/></svg></span></span>Лена</button>
+        <a class="tap realTg"><span class="ava" style="background:linear-gradient(180deg,#e89aa4,#c25f6c)">М<span class="badge" style="background:#2aabee"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M3 11.5 20.5 4.6c.8-.3 1.6.4 1.3 1.3l-3.3 14c-.2.9-1.2 1.2-1.9.7l-4.6-3.4-2.3 2.2c-.3.3-.8.1-.8-.3l.2-3.4 7.3-6.6-9 5.5-3.8-1.2c-.9-.3-.9-1.5 0-1.8Z"/></svg></span></span>Мама</a>
+        <button class="tap" data-send="Катя"><span class="ava" style="background:linear-gradient(180deg,#9fb7d6,#60789c)">К<span class="badge" style="background:#34c759"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 5 3.7 6.5L5 21l3.6-1.8c1 .3 2.2.5 3.4.5 5.5 0 10-3.8 10-8.5S17.5 3 12 3Z"/></svg></span></span>Катя</button>
+        <a class="tap realTg"><span class="ava" style="background:linear-gradient(180deg,#b9a2e3,#7d62b8)">Д<span class="badge" style="background:#2aabee"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M3 11.5 20.5 4.6c.8-.3 1.6.4 1.3 1.3l-3.3 14c-.2.9-1.2 1.2-1.9.7l-4.6-3.4-2.3 2.2c-.3.3-.8.1-.8-.3l.2-3.4 7.3-6.6-9 5.5-3.8-1.2c-.9-.3-.9-1.5 0-1.8Z"/></svg></span></span>Дима</a>
+        <button class="tap" data-send="Саша"><span class="ava" style="background:linear-gradient(180deg,#e6c27a,#b48a3a)">С<span class="badge" style="background:#34c759"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 5 3.7 6.5L5 21l3.6-1.8c1 .3 2.2.5 3.4.5 5.5 0 10-3.8 10-8.5S17.5 3 12 3Z"/></svg></span></span>Саша</button>
+      </div>
+      <div class="row">
+        <button class="tap" data-send="Сообщения"><span class="app-i" style="background:linear-gradient(180deg,#5bf675,#0cbd2a)"><svg width="36" height="36" viewBox="0 0 24 24" fill="#fff"><path d="M12 3.5c-5.2 0-9.3 3.5-9.3 7.9 0 2.5 1.3 4.7 3.4 6.1-.2 1.2-.8 2.4-1.7 3.2 1.8 0 3.4-.6 4.6-1.6.9.2 2 .3 3 .3 5.2 0 9.3-3.5 9.3-7.9S17.2 3.5 12 3.5Z"/></svg></span>Сообщения</button>
+        <a class="tap realTg"><span class="app-i" style="background:linear-gradient(180deg,#37aee2,#1e96c8)"><svg width="32" height="32" viewBox="0 0 24 24" fill="#fff"><path d="M3 11.5 20.5 4.6c.8-.3 1.6.4 1.3 1.3l-3.3 14c-.2.9-1.2 1.2-1.9.7l-4.6-3.4-2.3 2.2c-.3.3-.8.1-.8-.3l.2-3.4 7.3-6.6-9 5.5-3.8-1.2c-.9-.3-.9-1.5 0-1.8Z"/></svg></span>Telegram</a>
+        <button class="tap" data-send="WhatsApp"><span class="app-i" style="background:linear-gradient(180deg,#5af578,#20b038)"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 20l1.2-3.7A8.3 8.3 0 1 1 8 19z" stroke-linejoin="round"/></svg></span>WhatsApp</button>
+        <button class="tap" data-send="Почта"><span class="app-i" style="background:linear-gradient(180deg,#1e9bfd,#1562f2)"><svg width="34" height="34" viewBox="0 0 24 24" fill="#fff"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v.3l-9 6-9-6Z"/><path d="M3 8.6v8.9A1.5 1.5 0 0 0 4.5 19h15a1.5 1.5 0 0 0 1.5-1.5V8.6l-9 6Z"/></svg></span>Почта</button>
+        <button class="tap" data-expand><span class="app-i" style="background:rgba(118,118,128,.32)"><svg width="26" height="6" viewBox="0 0 26 6" fill="#fff"><circle cx="3" cy="3" r="2.6"/><circle cx="13" cy="3" r="2.6"/><circle cx="23" cy="3" r="2.6"/></svg></span>Ещё</button>
+      </div>
+      <div class="sgrp">
+        <button class="act" id="actCopy">Скопировать ссылку<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12.5" height="12.5" rx="2.5"/><path d="M16 8V6a2.5 2.5 0 0 0-2.5-2.5h-7A2.5 2.5 0 0 0 4 6v7a2.5 2.5 0 0 0 2.5 2.5H8"/></svg></button>
+        <button class="act" data-toast="Изображение сохранено">Сохранить изображение<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11.5M7.5 10.5 12 15l4.5-4.5M4.5 19.5h15"/></svg></button>
+        <button class="act" data-toast="Добавлено в Заметки">Добавить в Заметки<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4.5"/></svg></button>
+      </div>
+      <div class="sgrp">
+        <button class="act" data-toast="Добавлено в Избранное">Добавить в Избранное<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9Z"/></svg></button>
+        <button class="act" data-toast="Поиск по странице">Найти на странице<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3.5H6.5A2 2 0 0 0 4.5 5.5v13a2 2 0 0 0 2 2h4"/><circle cx="16" cy="15" r="3.6"/><path d="m18.6 17.6 2.4 2.4"/></svg></button>
+        <button class="act" data-toast="Добавлено на экран «Домой»">На экран «Домой»<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/></svg></button>
+        <button class="act" data-toast="Разметка">Разметка<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="m9 15 1-3 5-5 2 2-5 5Z"/></svg></button>
+      </div>
+      <button class="editActs" data-toast="Редактирование действий">Редактировать действия…</button>
+    </div>
+  </div>
+
+  <div class="home"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"><i><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.2 5 8.6l4.5-5"/></svg></i><span id="toastText"></span></div>
+</div>
+<div class="under"><span id="stepName">Создать подарок</span><button id="restart">Начать сначала</button></div>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const IMG={mixit:"img/b_mixit.jpg",ga:"img/b_ga.jpg",chitai:"img/b_chitai.jpg",plus:"img/b_plus.jpg",level:"img/b_level.jpg",sokolov:"img/b_sokolov.jpg",giftery:"img/b_giftery.jpg",gaBig:"img/brand_big_ga.jpg"};
+  const BRANDS=[
+    {id:'mixit',name:'MIXIT',range:'5 000 ₽',fixed:[5000]},
+    {id:'ga',name:'Золотое Яблоко',range:'500-50 000 ₽'},
+    {id:'chitai',name:'Читай-город',range:'500-50 000 ₽'},
+    {id:'plus',name:'Яндекс Плюс',range:'500-50 000 ₽'},
+    {id:'level',name:'Level Travel',range:'500-50 000 ₽'},
+    {id:'sokolov',name:'SOKOLOV',range:'500-50 000 ₽'},
+    {id:'giftery',name:'Premium Giftery Card',range:'500-50 000 ₽'}
+  ];
+  const AMOUNTS=[1000,2000,3000,4000,5000,10000,15000];
+  const TYPES=[
+    {n:'Романтический',d:'Партнёр, вторая половина-признание, годовщина, романтический жест'},
+    {n:'Дружеский',d:'Друг, приятель — день рождения, «просто порадовать»'},
+    {n:'Благодарственный',d:'Учитель, врач, наставник, сосед, куратор — уважение и благодарность'}
+  ];
+  const BUD=['Мудрость','Ностальгичность','Доброта','Теплота','Скромность'];
+  const PET=['Забота','Искренность','Верность','Надёжность','Спокойствие'];
+  const FEE=300;
+  const fresh=()=>({brand:null,amount:null,type:null,bud:[],pet:[]});
+  let S=fresh();
+  const rub=n=>n.toLocaleString('ru-RU').replace(/ |\s/g,' ')+' ₽';
+
+  // progress bars
+  document.querySelectorAll('.segs').forEach(el=>{const k=+el.dataset.step;el.innerHTML=[1,2,3,4,5].map(i=>`<i class="${i<=k?'on':''}"></i>`).join('');});
+
+  const setNext=(id,ok)=>{const b=document.querySelector('#'+id+' .bnav .cta');b.setAttribute('aria-disabled',String(!ok));};
+  function renderBrands(){
+    setNext('s-brand',!!S.brand);
+    $('brands').innerHTML=BRANDS.map(b=>{const on=b.id===S.brand;
+      return `<button class="brand ${on?'light':'glass'}" data-b="${b.id}" aria-pressed="${on}"><span class="bimg"><img alt="${b.name}" src="${IMG[b.id]}"></span><span class="amt"><small>Номинал</small><span>${b.range}</span></span></button>`}).join('');
+  }
+  function brandObj(){return BRANDS.find(b=>b.id===S.brand)}
+  function renderAmounts(){
+    const b=brandObj();
+    if(!b){setNext('s-amount',false);return;}
+    const allowed=b.fixed||AMOUNTS;
+    if(!allowed.includes(S.amount)) S.amount=null;
+    setNext('s-amount',S.amount!=null);
+    $('bigBrandImg').src=b.id==='ga'?IMG.gaBig:IMG[b.id];$('bigBrandImg').alt=b.name;
+    $('amts').innerHTML=AMOUNTS.map(a=>{const on=a===S.amount,dis=!allowed.includes(a);
+      return `<button class="amtb ${on?'light':'glass'}" data-a="${a}" ${dis?'disabled':''} aria-pressed="${on}">${rub(a)}</button>`}).join('');
+    $('amtNote').textContent=b.fixed?`У ${b.name} сертификат только на ${rub(b.fixed[0])}`:'';
+  }
+  function renderTypes(){
+    setNext('s-type',!!S.type);
+    $('types').innerHTML=TYPES.map(t=>{const on=t.n===S.type;
+      return `<button class="type ${on?'light':'glass'}" data-t="${t.n}" aria-pressed="${on}"><b>${t.n}</b><span>${t.d}</span></button>`}).join('');
+  }
+  function renderTraits(){
+    const chip=(list,sel,g)=>list.map(n=>{const on=sel.includes(n);return `<button class="chip ${on?'light':'glass'}" data-g="${g}" data-c="${n}" aria-pressed="${on}">${n}</button>`}).join('');
+    $('chipsBud').innerHTML=chip(BUD,S.bud,'bud');$('chipsPet').innerHTML=chip(PET,S.pet,'pet');
+    $('cntBud').textContent=S.bud.length+'/2';$('cntBud').classList.toggle('full',S.bud.length===2);
+    $('cntPet').textContent=S.pet.length+'/1';$('cntPet').classList.toggle('full',S.pet.length===1);
+    setNext('s-traits',S.bud.length===2&&S.pet.length===1);
+  }
+  function renderPay(){
+    if(!S.brand||S.amount==null)return;
+    $('payType').textContent=S.type;$('payBrand').textContent=brandObj().name;
+    $('payAmount').textContent=rub(S.amount);$('pCert').textContent=rub(S.amount);
+    $('pTotal').textContent=rub(S.amount+FEE);$('payLbl').textContent='Оплатить '+rub(S.amount+FEE);
+  }
+  function renderAll(){renderBrands();renderAmounts();renderTypes();renderTraits();renderPay();}
+  renderAll();
+
+  // selection handlers
+  $('brands').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;S.brand=b.dataset.b;renderBrands();renderAmounts();renderPay();});
+  $('amts').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;S.amount=+b.dataset.a;renderAmounts();renderPay();});
+  $('types').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;S.type=b.dataset.t;renderTypes();renderPay();});
+  document.querySelectorAll('.chips').forEach(c=>c.addEventListener('click',e=>{
+    const b=e.target.closest('[data-c]');if(!b)return;const g=b.dataset.g,n=b.dataset.c,max=g==='bud'?2:1,arr=S[g];
+    const i=arr.indexOf(n); if(i>=0) arr.splice(i,1); else { if(arr.length>=max) arr.shift(); arr.push(n); }
+    renderTraits();
+  }));
+
+  // navigation stack
+  const NAMES={'s-intro':'Создать подарок','s-brand':'Выбор бренда','s-amount':'Выбор номинала','s-type':'Выбор типа подарка','s-traits':'Качества подарка','s-pay':'Оплата','s-ready':'Ссылка готова'};
+  let stack=['s-intro'];
+  function show(id,dir){
+    const cur=$(stack[stack.length-1]),nxt=$(id);
+    if(dir==='fwd'){
+      nxt.classList.add('instant');nxt.classList.remove('left','cur');void nxt.offsetWidth;nxt.classList.remove('instant');
+      nxt.querySelector('.scroll')&&(nxt.querySelector('.scroll').scrollTop=0);
+      cur.classList.remove('cur');cur.classList.add('left');nxt.classList.add('cur');stack.push(id);
+    }else{
+      cur.classList.remove('cur','left');stack.pop();nxt.classList.remove('left');nxt.classList.add('cur');
+    }
+    $('stepName').textContent=NAMES[stack[stack.length-1]];
+  }
+  document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.getAttribute('aria-disabled')==='true')return;
+    show(b.dataset.next,'fwd');
+  }));
+  document.querySelectorAll('.back').forEach(b=>b.addEventListener('click',()=>{if(stack.length>1)show(stack[stack.length-2],'back');}));
+
+  // payment imitation
+  let paying=false;
+  $('payBtn').addEventListener('click',()=>{
+    if(paying)return;paying=true;const ic=$('payIc'),old=ic.innerHTML;
+    $('payLbl').textContent='Оплачиваем…';ic.innerHTML='<span class="spin"></span>';
+    setTimeout(()=>{
+      show('s-ready','fwd');
+      // after payment there is no way back into the purchase steps
+      setTimeout(()=>{stack.slice(0,-1).forEach(id=>{const el=$(id);el.classList.add('instant');el.classList.remove('left');void el.offsetWidth;el.classList.remove('instant');});stack=['s-ready'];ic.innerHTML=old;renderPay();paying=false;},500);
+    },1300);
+  });
+
+  $('restart').addEventListener('click',()=>{
+    closeSheet();S=fresh();renderAll();
+    document.querySelectorAll('.scr').forEach(s=>{s.classList.add('instant');s.classList.remove('cur','left');});
+    $('s-intro').classList.add('cur');$('s-intro').querySelector('.scroll').scrollTop=0;
+    void document.body.offsetWidth;document.querySelectorAll('.scr').forEach(s=>s.classList.remove('instant'));
+    stack=['s-intro'];$('stepName').textContent=NAMES['s-intro'];
+  });
+
+  // scale phone to the viewport
+  const fit=$('fit');
+  const mobile=matchMedia('(max-width:500px)');
+  function scale(){
+    if(mobile.matches){fit.style.transform='';fit.dataset.s=1;return;}   // real phone: full screen, no mock-up
+    const s=Math.min((innerWidth-48)/393,(innerHeight-100)/852,1);
+    fit.style.transform='scale('+s+')';fit.dataset.s=s;
+  }
+  addEventListener('resize',scale);scale();
+
+  // ===== iOS share sheet: detents, drag, rubber-band =====
+  const sheet=$('sheet'),scrim=$('scrim'),app=$('app'),sbody=$('sbody'),link=$('linkText').textContent.trim();
+  const SHARE_TITLE='Тебе подарили живой подарок',SHARE_TEXT='Тебе подарили живой подарок 🌹 Открой, чтобы увидеть, как он распустится';
+  $('thumbImg').src=$('roseImg').src;
+  let H=790, LARGE=0, MED=H-532, CLOSED=H+20;
+  function measure(){   // detents from the real screen: large leaves a strip on top, medium ≈ 532pt like iOS
+    const ph=$('phone').clientHeight; let top=62;
+    if(mobile.matches){const pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';document.body.appendChild(pr);top=(parseFloat(getComputedStyle(pr).paddingTop)||0)+10;pr.remove();}
+    H=ph-top; MED=Math.max(0,H-Math.min(532,Math.round(ph*0.64))); CLOSED=H+20;
+    sheet.style.setProperty('--sh',H+'px');
+  }
+  let pos=CLOSED,isOpen=false;
+  function paint(y,anim){
+    [sheet,app,scrim].forEach(el=>el.classList.toggle('drag',!anim));
+    sheet.style.transform='translateY('+y+'px)';
+    const p=Math.min(1,Math.max(0,(MED-y)/MED));            // 0 at medium → 1 at large
+    const c=Math.min(1,Math.max(0,(y-MED)/(CLOSED-MED)));   // 0 at medium → 1 closed
+    scrim.style.opacity=y>=MED?(0.22*(1-c)):(0.22+0.2*p);
+    if(p>0){app.style.transform='translateY('+(10*p)+'px) scale('+(1-0.075*p)+')';app.style.borderRadius=(12*p)+'px';}
+    else{app.style.transform='';app.style.borderRadius='';}
+    sheet.classList.toggle('large',y<=LARGE+1);
+    pos=y;
+  }
+  function snap(y){paint(y,true);if(y>=CLOSED){isOpen=false;scrim.classList.remove('on');sheet.setAttribute('aria-hidden','true');sbody.scrollTop=0;}}
+  function openSheet(){measure();isOpen=true;scrim.classList.add('on');sheet.setAttribute('aria-hidden','false');paint(CLOSED,false);void sheet.offsetWidth;snap(MED);
+    setTimeout(()=>$('closeBtn').focus({preventScroll:true}),450);}
+  function closeSheet(){if(!isOpen)return;snap(CLOSED);}
+  window.__closeSheet=closeSheet;
+
+  // try the real system share sheet first; inside the artifact frame it is blocked, so the drawn one opens
+  async function share(){
+    if(navigator.share){
+      try{await navigator.share({title:SHARE_TITLE,text:SHARE_TEXT,url:link});return;}
+      catch(e){if(e&&e.name==='AbortError')return;}
+    }
+    openSheet();
+  }
+
+  let tT;
+  function toast(t){$('toastText').textContent=t;const el=$('toast');el.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('on'),2200);}
+  async function copy(){
+    try{await navigator.clipboard.writeText(link);}catch(e){const r=document.createRange();r.selectNodeContents($('linkText'));const s=getSelection();s.removeAllRanges();s.addRange(r);}
+    toast('Ссылка скопирована');
+  }
+  $('shareBtn').addEventListener('click',share);
+  $('closeBtn').addEventListener('click',closeSheet);
+  scrim.addEventListener('click',closeSheet);
+  $('actCopy').addEventListener('click',()=>{closeSheet();setTimeout(copy,280);});
+  document.querySelectorAll('[data-send]').forEach(b=>b.addEventListener('click',()=>{const to=b.dataset.send;closeSheet();
+    setTimeout(()=>toast(to==='AirDrop'?'Отправлено через AirDrop':'Ссылка отправлена · '+to),320);}));
+  document.querySelectorAll('.sheet [data-toast]').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.toast;if(t!=='Параметры')closeSheet();setTimeout(()=>toast(t),t==='Параметры'?0:320);}));
+  document.querySelector('[data-expand]').addEventListener('click',()=>snap(LARGE));
+  document.querySelectorAll('.realTg').forEach(a=>{a.href='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(SHARE_TEXT);a.target='_blank';a.rel='noopener';
+    a.addEventListener('click',()=>{closeSheet();setTimeout(()=>toast('Открываем Telegram'),320);});});
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&isOpen)closeSheet();});
+
+  // drag: anywhere on the sheet at the medium detent; on the handle/header at the large one (the list scrolls there)
+  let d=null,suppress=false;
+  sheet.addEventListener('pointerdown',e=>{
+    if(!isOpen||e.button>0)return;
+    const onHead=e.target.closest('#grab,#shead');
+    if(sheet.classList.contains('large')&&!onHead&&sbody.scrollTop>0)return;
+    d={y0:e.clientY,p0:pos,id:e.pointerId,moved:false,samples:[[performance.now(),e.clientY]],head:!!onHead};
+  });
+  sheet.addEventListener('pointermove',e=>{
+    if(!d||e.pointerId!==d.id)return;
+    const s=+fit.dataset.s||1, dy=(e.clientY-d.y0)/s;
+    if(!d.moved){
+      if(Math.abs(dy)<6)return;
+      if(sheet.classList.contains('large')&&!d.head&&dy<0)return;   // let the list scroll up
+      d.moved=true;try{sheet.setPointerCapture(d.id);}catch(_){}
+    }
+    let y=d.p0+dy;
+    if(y<LARGE) y=LARGE-Math.pow(LARGE-y,0.72)*1.4;                 // rubber-band above the top detent
+    paint(y,false);
+    d.samples.push([performance.now(),e.clientY]);if(d.samples.length>6)d.samples.shift();
+  });
+  function end(e){
+    if(!d)return;const was=d;d=null;
+    if(!was.moved){paint(pos,true);return;}
+    suppress=true;setTimeout(()=>suppress=false,0);
+    const s=+fit.dataset.s||1, a=was.samples[0], b=was.samples[was.samples.length-1];
+    const v=((b[1]-a[1])/s)/Math.max(1,b[0]-a[0]);                    // px/ms, + is down
+    const stops=[LARGE,MED,CLOSED];
+    let target;
+    if(Math.abs(v)>0.6){ target=v>0?stops.find(x=>x>pos+1)??CLOSED:[...stops].reverse().find(x=>x<pos-1)??LARGE; }
+    else{ const proj=pos+v*180; target=stops.reduce((m,x)=>Math.abs(x-proj)<Math.abs(m-proj)?x:m,MED); }
+    snap(target);
+  }
+  sheet.addEventListener('pointerup',end);sheet.addEventListener('pointercancel',end);
+  sheet.addEventListener('click',e=>{if(suppress){e.stopPropagation();e.preventDefault();}},true);
+})();
+</script>
+
+</body>
+</html>
