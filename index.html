@@ -9,7 +9,7 @@
 <style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script>
 /* Safari may serve a cached copy for up to 10 min on GitHub Pages: compare with the server's version and reload if stale */
-(function(){var V='1792330901';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='1792331056';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -643,12 +643,12 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
     const seg=[...sc.querySelectorAll('.segs i.on')].pop();
     if(seg&&seg.animate)seg.animate([{transform:'scaleX(0)',transformOrigin:'left'},{transform:'scaleX(1)',transformOrigin:'left'}],{duration:700,delay:200,easing:'cubic-bezier(.32,.72,0,1)',fill:'backwards'});
   }
-  // a little "pop" on whatever was just picked (cards, amounts, types, chips)
+  // a soft settle on whatever was just picked (cards, amounts, types, chips)
   document.addEventListener('click',e=>{
     const t=e.target.closest('[data-b],[data-a],[data-t],[data-c]');if(!t||t.disabled)return;
     const attr=['b','a','t','c'].find(k=>t.dataset[k]!==undefined),val=t.dataset[attr],box=t.parentElement.id;
     setTimeout(()=>{const n=document.querySelector('#'+box+' [data-'+attr+'="'+CSS.escape(val)+'"]');
-      if(n&&n.animate)n.animate([{transform:'scale(.95)'},{transform:'scale(1.035)'},{transform:'scale(1)'}],{duration:420,easing:'cubic-bezier(.32,.72,0,1)'});},0);
+      if(n&&n.animate)n.animate([{transform:'scale(.985)',opacity:.85},{transform:'scale(1)',opacity:1}],{duration:380,easing:'cubic-bezier(.25,.8,.35,1)'});},0);
   },true);
   requestAnimationFrame(()=>enter('s-intro'));
   document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{
