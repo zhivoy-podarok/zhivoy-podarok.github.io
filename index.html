@@ -9,7 +9,7 @@
 <style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script>
 /* Safari may serve a cached copy for up to 10 min on GitHub Pages: compare with the server's version and reload if stale */
-(function(){var V='1792316033';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='1792316333';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -293,6 +293,10 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
   /* fade the warm glow out toward the top so it meets Safari's flat status-bar tint without a seam */
   .glow{-webkit-mask-image:linear-gradient(to bottom,transparent 160px,#000 330px);mask-image:linear-gradient(to bottom,transparent 160px,#000 330px)}
   .scr.scrolled .bnav::before{height:calc(var(--bot) + 140px)}
+  /* Safari (not a home-screen app) never paints the page under the status bar at scroll-top and fills it with the body colour:
+     melt the top of the intro photo into that colour so there is no hard edge */
+  #s-intro .introTop::before{content:"";position:absolute;left:0;right:0;top:0;height:96px;z-index:1;pointer-events:none;
+    background:linear-gradient(to bottom,var(--screen) 0%,rgba(15,38,29,.85) 18%,rgba(15,38,29,.55) 40%,rgba(15,38,29,.25) 65%,rgba(15,38,29,0) 100%)}
   .scroll{padding-top:calc(var(--top) + 8px);padding-bottom:calc(var(--bot) + 150px)}
   .bnav{padding-bottom:calc(var(--bot) + 12px)}
   .bnav::before{transition:height .3s ease;height:calc(var(--bot) + 76px);background:linear-gradient(to bottom,rgba(15,38,29,0) 0%,rgba(15,38,29,.12) 15%,rgba(15,38,29,.3) 28%,rgba(15,38,29,.52) 40%,rgba(15,38,29,.72) 52%,rgba(15,38,29,.87) 63%,rgba(15,38,29,.96) 73%,var(--screen) 82%)}
@@ -304,6 +308,8 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
   .sheet{border-radius:13px 13px 0 0}
   .sbody{padding-bottom:var(--bot)}
 }
+
+@media (max-width:500px) and (display-mode:standalone){#s-intro .introTop::before{display:none}}
 
 /* outside the phone */
 .under{position:absolute;left:0;right:0;top:calc(100% + 22px);display:flex;justify-content:center;gap:16px;align-items:center;font:500 12px var(--font-ui);color:rgba(255,255,255,.42)}
