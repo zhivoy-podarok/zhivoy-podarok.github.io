@@ -9,7 +9,7 @@
 <style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script>
 /* Safari may serve a cached copy for up to 10 min on GitHub Pages: compare with the server's version and reload if stale */
-(function(){var V='1792316333';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='1792316587';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -281,9 +281,9 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
 /* ===== Real phone: full-screen app instead of a mock-up ===== */
 @media (max-width:500px){
   :root{--top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px)}
-  html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+  html,body{height:var(--appH,100%);overflow:hidden;overscroll-behavior:none}
   body{padding:0;display:block;background:var(--screen)}
-  .fit{width:100%;height:100%;transform:none!important}
+  .fit{width:100%;height:var(--appH,100%);transform:none!important}
   .phone{width:100%;height:100%;border-radius:0;box-shadow:none}
   .status,.home,.under{display:none}
   /* no downward gold glow under the button: Safari's bottom bar would cut it into a band */
@@ -644,12 +644,22 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
   // scale phone to the viewport
   const fit=$('fit');
   const mobile=matchMedia('(max-width:500px)');
+  // real height of the visible screen: Safari's toolbar collapses/expands (innerHeight follows it), and a home-screen app on iOS 26
+  // reports a viewport ~60px shorter than the display, leaving an empty band under the button — use the full screen there
+  function appH(){
+    const sa=matchMedia('(display-mode:standalone)').matches||navigator.standalone===true;
+    const portrait=innerHeight>=innerWidth;
+    const full=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
+    const h=sa?Math.max(innerHeight,full):innerHeight;
+    document.documentElement.style.setProperty('--appH',h+'px');
+  }
   function scale(){
+    appH();
     if(mobile.matches){fit.style.transform='';fit.dataset.s=1;return;}   // real phone: full screen, no mock-up
     const s=Math.min((innerWidth-48)/393,(innerHeight-100)/852,1);
     fit.style.transform='scale('+s+')';fit.dataset.s=s;
   }
-  addEventListener('resize',scale);scale();
+  addEventListener('resize',scale);if(window.visualViewport)visualViewport.addEventListener('resize',scale);addEventListener('orientationchange',()=>setTimeout(scale,300));scale();
 
   // ===== iOS share sheet: detents, drag, rubber-band =====
   const sheet=$('sheet'),scrim=$('scrim'),app=$('app'),sbody=$('sbody'),link=$('linkText').textContent.trim();
