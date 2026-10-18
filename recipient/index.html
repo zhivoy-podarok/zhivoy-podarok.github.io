@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f261d">
+<meta property="og:title" content="Тебе отправили живой подарок">
+<meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
+<meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
+<script>
+(function(){var V='1792324757';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
+</script>
+</head>
+<body>
+<title>Живой подарок · Получатель</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap">
+<style>
+/* Recipient flow: hold-to-open (waiting video → reveal video → bloomed rose), certificate, then the flower app with tabs and a swipe-card test */
+:root{
+  color-scheme:dark;
+  --stage:#0a120e;--screen:#0f261d;--deep:#051a17;--ink:#14111a;--white:#fff;
+  --w70:rgba(255,255,255,.7);--w20:rgba(255,255,255,.2);--w12:rgba(255,255,255,.12);
+  --accent:#fbe7bf;
+  --gold-1:#fff3d1;--gold-2:#f4cf7c;--gold-3:#e0a24f;
+  --light-1:#fffaf0;--light-2:#f6e3b6;
+  --green-1:#2e7a5f;--green-2:#185844;--green-3:#0e3b2d;
+  --card-b:rgba(200,225,208,.22);--card-1:rgba(150,180,160,.24);--card-2:rgba(120,148,127,.12);
+  --warm-b:rgba(255,222,160,.24);
+  --neg:rgba(255,140,120,.3);--pos:rgba(244,207,124,.18);
+  --font-ui:"Manrope",system-ui,sans-serif;
+  --font-display:"Cormorant Garamond","Times New Roman",serif;
+  --font-ios:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;
+  --ease:cubic-bezier(.32,.72,0,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--stage);color:var(--white);display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:var(--font-ui);
+  -webkit-font-smoothing:antialiased;padding:0 16px}
+button{font:inherit;border:0;background:none;color:inherit;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
+p,h1,h2{margin:0}
+
+.fit{width:393px;height:852px;flex:none;position:relative;transform-origin:center center}
+.phone{position:relative;width:393px;height:852px;background:var(--screen);border-radius:44px;overflow:hidden;isolation:isolate;
+  box-shadow:0 0 0 10px #1b1d1c,0 0 0 11px #2e3230,0 40px 80px rgba(0,0,0,.6)}
+.status{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 52px;z-index:40;font-family:var(--font-ios);pointer-events:none}
+.status b{font-size:17px;font-weight:600;letter-spacing:-.2px}
+.levels{display:flex;gap:6px;align-items:center}
+.home{position:absolute;left:127px;right:127px;bottom:8px;height:5px;border-radius:100px;background:#fff;z-index:60;pointer-events:none}
+
+/* screens + iOS push */
+.scr{position:absolute;inset:0;background:var(--screen);overflow:hidden;transform:translateX(100%);visibility:hidden;
+  transition:transform .5s var(--ease),visibility 0s .5s}
+.scr.cur{transform:none;visibility:visible;transition:transform .5s var(--ease),visibility 0s}
+.scr.left{transform:translateX(-28%);visibility:visible}
+.scr::after{content:"";position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .5s;z-index:30}
+.scr.left::after{opacity:.35}
+.scr.fade{transform:none;opacity:0;transition:opacity .28s ease,visibility 0s .28s}
+.scr.fade.cur{opacity:1;transition:opacity .28s ease,visibility 0s}
+.glow{position:absolute;left:-100px;top:-160px;width:600px;height:460px;pointer-events:none;
+  background:radial-gradient(ellipse 424px 390px at 300px 184px,rgba(181,111,36,.2),rgba(181,111,36,0) 62%)}
+.scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-top:54px}
+.scroll::-webkit-scrollbar{display:none}
+
+/* shared bits */
+.segs{display:flex;gap:2px;width:100%}
+.segs i{flex:1;height:4px;border-radius:100px;background:var(--w12);transition:background .4s}
+.segs i.on{background:linear-gradient(168deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3))}
+.pill{display:inline-flex;align-items:center;height:32px;padding:0 8px;border-radius:100px;background:var(--w12);border:1px solid var(--w20);
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);font-size:14px;font-weight:500;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:100px;font-size:12px;font-weight:500;white-space:nowrap;
+  background:linear-gradient(118deg,var(--green-1),var(--green-2) 45%,var(--green-3));color:var(--accent)}
+.chip.light{background:linear-gradient(146deg,var(--light-1),var(--light-2));color:var(--ink)}
+.glass{position:relative;border:1px solid var(--card-b);background:linear-gradient(165deg,var(--card-1),var(--card-2));box-shadow:inset 0 1px 0 var(--w12);
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px)}
+.light{background:linear-gradient(130deg,var(--light-1),var(--light-2));color:var(--ink)}
+.h1{font-weight:400;font-size:32px;line-height:36px}
+.acc{font-family:var(--font-display);font-style:italic;font-weight:400;color:var(--accent)}
+.sub{font-size:14px;font-weight:500;color:var(--w70)}
+.xs{font-size:12px;font-weight:500;color:var(--w70)}
+
+.cta{position:relative;overflow:hidden;isolation:isolate;width:100%;height:52px;border-radius:100px;border:1px solid var(--w20);display:flex;align-items:center;
+  padding:8px 8px 8px 16px;font:500 16px var(--font-ui);color:var(--ink);
+  background:linear-gradient(135deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3));
+  box-shadow:0 12px 34px rgba(244,180,90,.4),inset 0 1px 0 rgba(255,255,255,.8);transition:transform .15s,opacity .25s,box-shadow .25s}
+.cta:active{transform:scale(.98)}
+.cta .lbl{flex:1;text-align:center;white-space:nowrap}
+.cta .ic{flex:none;width:40px;height:40px;border-radius:50%;background:var(--screen);display:flex;align-items:center;justify-content:center;color:#fff}
+.cta::before{content:"";position:absolute;top:-20%;bottom:-20%;left:0;width:45%;z-index:-1;pointer-events:none;
+  background:linear-gradient(105deg,rgba(255,255,255,0),rgba(255,255,255,.18) 35%,rgba(255,252,236,.75) 50%,rgba(255,255,255,.18) 65%,rgba(255,255,255,0));
+  transform:translateX(-120%) skewX(-18deg);animation:sheen 3.2s cubic-bezier(.45,.05,.25,1) infinite}
+@keyframes sheen{0%{transform:translateX(-120%) skewX(-18deg)}55%,100%{transform:translateX(300%) skewX(-18deg)}}
+.cta[aria-disabled="true"]{opacity:.5;box-shadow:none;cursor:default}
+.cta[aria-disabled="true"]::before{animation:none;opacity:0}
+.cta[aria-disabled="true"]:active{transform:none}
+.ghost{width:100%;height:52px;border-radius:100px;font:500 16px var(--font-ui);color:#fff}
+.roundbtn{flex:none;width:42px;height:42px;border-radius:100px;background:var(--w12);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);transition:transform .15s}
+.roundbtn:active{transform:scale(.92)}
+
+/* ===== 1 · Link: waiting → reveal → bloomed ===== */
+#s-gift{background:var(--deep)}
+.stage{position:absolute;left:0;right:0;top:0;height:701px;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.stage video,.stage .still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;transition:opacity .45s ease}
+.stage .still{opacity:0}
+.stage .still img{position:absolute;top:0;height:100%;width:126.15%;left:-16.43%;max-width:none;object-fit:cover}
+#vReveal{opacity:0}
+#s-gift.revealing #vReveal,#s-gift.bloomed #vReveal{opacity:1}
+#s-gift.bloomed .still{opacity:1;transition-duration:.9s}
+.topfade{position:absolute;left:0;right:0;top:0;height:72px;background:linear-gradient(rgba(8,35,31,.75),rgba(5,26,23,0));pointer-events:none;z-index:2}
+.botfade{position:absolute;left:0;right:0;bottom:0;height:407px;pointer-events:none;z-index:2;
+  background:linear-gradient(180deg,rgba(23,58,71,0) 12%,rgba(20,53,64,.18) 28%,rgba(17,47,55,.5) 44%,rgba(5,26,23,.9) 56%,var(--deep) 63%)}
+.gift-top{position:absolute;left:16px;right:16px;top:66px;z-index:5;display:flex;flex-direction:column;gap:16px;pointer-events:none}
+.gift-top .pill{align-self:flex-start}
+
+/* "waiting for touch": concentric rings breathe, a ripple leaves the button, the print shimmers */
+.touch{position:absolute;left:50%;top:calc(50% - 48px);width:116px;height:116px;margin:-58px 0 0 -58px;z-index:4;pointer-events:none;
+  transition:opacity .35s ease,transform .45s var(--ease)}
+.touch .r1,.touch .r2{position:absolute;border:1px solid var(--light-1);border-radius:50%}
+.touch .r1{inset:0;opacity:.55;animation:breathe 2.4s ease-in-out infinite}
+.touch .r2{inset:13px;opacity:.8;animation:breathe 2.4s ease-in-out .3s infinite}
+.touch .core{position:absolute;inset:26px;border-radius:50%;background:var(--w12);border:1px solid var(--w20);display:flex;align-items:center;justify-content:center;
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);overflow:hidden}
+.touch .core svg{animation:printGlow 2.4s ease-in-out infinite}
+.touch .wave{position:absolute;inset:26px;border-radius:50%;border:1.5px solid rgba(255,250,240,.9);opacity:0;animation:wave 2.4s cubic-bezier(.2,.6,.3,1) infinite}
+.touch .wave+.wave{animation-delay:1.2s}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+@keyframes wave{0%{transform:scale(1);opacity:.85}100%{transform:scale(2.6);opacity:0}}
+@keyframes printGlow{0%,100%{opacity:.75;filter:none}50%{opacity:1;filter:drop-shadow(0 0 6px rgba(255,243,209,.9))}}
+#s-gift.pressing .touch{transform:scale(.86)}
+#s-gift.revealing .touch,#s-gift.bloomed .touch{opacity:0;transform:scale(1.4)}
+
+.gift-msg{position:absolute;left:16px;right:16px;top:588px;z-index:5;pointer-events:none}
+.msg{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;gap:12px;transition:opacity .5s ease,transform .6s var(--ease)}
+.msg .l1{font-size:32px;line-height:36px;font-weight:400}
+.msg .l2{font-size:44px;line-height:40px;height:38px}
+.msg .d{font-size:14px;font-weight:500}
+.msg.m2{opacity:0;transform:translateY(14px)}
+#s-gift.bloomed .msg.m1{opacity:0;transform:translateY(-10px)}
+#s-gift.bloomed .msg.m2{opacity:1;transform:none}
+.traits{display:flex;flex-wrap:wrap;gap:8px}
+.traits span{height:40px;padding:0 16px;border-radius:100px;display:inline-flex;align-items:center;font-size:14px;font-weight:500;
+  opacity:0;transform:translateY(10px) scale(.96);transition:opacity .45s ease,transform .5s var(--ease)}
+#s-gift.bloomed .traits span{opacity:1;transform:none}
+#s-gift.bloomed .traits span:nth-child(1){transition-delay:.55s}
+#s-gift.bloomed .traits span:nth-child(2){transition-delay:.7s}
+#s-gift.bloomed .traits span:nth-child(3){transition-delay:.85s}
+
+.gift-bot{position:absolute;left:0;right:0;bottom:0;z-index:6;padding:0 16px 40px}
+.hint{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;color:var(--w70);white-space:nowrap;transition:opacity .35s}
+.hint::before,.hint::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.35))}
+.hint::after{background:linear-gradient(270deg,rgba(255,255,255,0),rgba(255,255,255,.35))}
+.hint b{font-weight:500;display:inline-block;transition:opacity .25s}
+.holdbar{width:100px;height:1px;margin:10px auto 0;border-radius:100px;background:var(--w20);overflow:hidden;opacity:0;transition:opacity .3s}
+.holdbar i{display:block;height:100%;width:0;background:linear-gradient(174deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3))}
+#s-gift.revealing .holdbar{opacity:1}
+.gift-bot .cta{position:absolute;left:16px;right:16px;bottom:40px;width:auto;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .5s ease 1s,transform .6s var(--ease) 1s}
+#s-gift.bloomed .hint,#s-gift.bloomed .holdbar{opacity:0}
+#s-gift.bloomed .gift-bot .cta{opacity:1;transform:none;pointer-events:auto}
+
+/* ===== 2 · Certificate ===== */
+.cert-head{display:flex;flex-direction:column;gap:12px;padding:12px 16px 0;text-align:center}
+.cert-head .sub{font-size:16px}
+.ticket{margin:20px 16px 0;position:relative;
+  -webkit-mask:radial-gradient(circle 9px at 0 201px,#0000 8.5px,#000 9px) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 201px,#0000 8.5px,#000 9px) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 9px at 0 201px,#0000 8.5px,#000 9px) left/51% 100% no-repeat,radial-gradient(circle 9px at 100% 201px,#0000 8.5px,#000 9px) right/51% 100% no-repeat}
+.ticket .pic{height:201px;border-radius:24px 24px 0 0;border:1px solid var(--w20);border-bottom:0;overflow:hidden}
+.ticket .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.ticket .stub{height:65px;display:flex;align-items:center;gap:12px;padding:0 16px;border-radius:0 0 20px 20px;border-top:1px dashed var(--green-1)}
+.ticket .stub p{flex:1;font-size:14px;font-weight:500}
+.ticket .stub b{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:44px;line-height:40px;white-space:nowrap}
+.grow{margin:20px 16px 0;border-radius:32px;border:1px solid var(--warm-b);padding:20px;display:flex;flex-direction:column;gap:16px;
+  background:linear-gradient(97deg,var(--green-1),var(--green-2) 45%,var(--green-3));box-shadow:inset 0 1px 0 var(--w12)}
+.grow>p{font-size:18px;font-weight:600}
+.grow .first{background:var(--screen);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.grow .first p{font-family:var(--font-display);font-style:italic;font-weight:500;font-size:24px;line-height:26px;color:var(--accent)}
+.step{display:flex;gap:12px}
+.step .rail{width:12px;flex:none;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:7px}
+.step .rail i{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.6;flex:none}
+.step .rail u{flex:1;width:1px;background:var(--accent);opacity:.18}
+.step>div:last-child{display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding-bottom:8px;font-size:14px;font-weight:500}
+.cert-bot{position:absolute;left:0;right:0;bottom:0;padding:24px 16px 40px;display:flex;flex-direction:column;gap:12px;z-index:5;
+  background:linear-gradient(rgba(15,38,29,0),var(--screen) 40%)}
+
+/* ===== 3 · App shell with tabs ===== */
+#s-app{background:var(--screen)}
+.tab{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s}
+.tab.on{opacity:1;visibility:visible;transition:opacity .3s ease,visibility 0s}
+.tab .scroll{padding-bottom:130px}
+.tabbar{position:absolute;left:0;right:0;bottom:0;z-index:20;padding:16px 16px 40px}
+.tabbar::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(rgba(15,38,29,0),rgba(15,38,29,.82) 45%,rgba(15,38,29,.96))}
+.tabs{display:flex;padding:4px;border-radius:100px;border:1px solid var(--warm-b);background:var(--screen);box-shadow:0 8px 24px rgba(0,0,0,.3),inset 0 1px 0 var(--w12)}
+.tabs button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 6px;border-radius:100px;font-size:12px;font-weight:500;white-space:nowrap;transition:background .25s}
+.tabs button.on{background:var(--card-b)}
+
+/* home */
+.hero{position:relative;height:580px;margin-top:-54px;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero::before{content:"";position:absolute;left:0;right:0;top:0;height:150px;background:linear-gradient(rgba(8,35,31,.75),rgba(5,26,23,0));z-index:1}
+.hero::after{content:"";position:absolute;left:0;right:0;top:440px;height:140px;background:linear-gradient(rgba(23,58,71,0),var(--deep))}
+.hero-top{position:absolute;left:16px;right:16px;top:66px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+.hero-top .pill{height:42px;padding:0 12px}
+.genes{margin:0 16px;border-radius:24px;border:1px solid var(--warm-b);background:var(--w12);padding:12px 0;display:flex;flex-direction:column;gap:12px;
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);position:relative;z-index:2}
+.genes .xs{padding:0 16px}
+.genes .row{display:flex}
+.gene{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--w70)}
+.ring{position:relative;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.gene:active .ring{transform:scale(.94)}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring b{position:relative;font-size:18px;font-weight:600;color:#fff}
+.gene.on .ring{background:linear-gradient(118deg,var(--light-1),var(--light-2))}
+.gene.on .ring b{color:var(--ink)}
+.gene.on .ring .trk{stroke:rgba(27,26,18,.12)}
+.ring .arc{transition:stroke-dashoffset .8s var(--ease)}
+.water{display:flex;justify-content:space-between;align-items:center;padding:20px 16px 0}
+.water .acc{font-size:32px;line-height:36px;display:block;margin-top:6px}
+.wbtn{position:relative;width:96px;height:96px;flex:none}
+.wbtn svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.wbtn .disc{position:absolute;inset:9px;border-radius:99px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:linear-gradient(118deg,var(--light-1),var(--light-2));color:var(--ink);font-size:12px;font-weight:500;
+  box-shadow:0 12px 34px rgba(244,180,90,.4),inset 0 1px 0 rgba(255,255,255,.8);transition:transform .15s}
+.wbtn:active .disc{transform:scale(.95)}
+.wbtn .drop{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px;pointer-events:none;opacity:0}
+.wbtn.pour .drop{animation:drip .9s ease-out forwards}
+@keyframes drip{0%{opacity:1;transform:translate(0,-10px) scale(.6)}100%{opacity:0;transform:translate(var(--dx),-110px) scale(1)}}
+
+/* DNA */
+.page-head{padding:12px 16px 20px;display:flex;flex-direction:column;gap:8px}
+.page-head .sub{opacity:1}
+.effects{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px}
+.effects>div{border-radius:24px;padding:16px;display:flex;justify-content:space-between;align-items:flex-end}
+.effects .big{font-size:32px;line-height:36px;display:block;margin-bottom:6px}
+.effects .ico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(118deg,var(--light-1),var(--light-2));flex:none}
+.effects .wide{grid-column:1/-1;display:block;align-items:initial}
+.traitlist{padding:20px 16px 0;display:flex;flex-direction:column;gap:12px}
+.tcard{border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:12px;position:relative}
+.tcard .top{display:flex;gap:12px;align-items:center}
+.tcard .top>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.tcard .pct{font-size:18px;font-weight:600}
+.tcard .bar{display:flex;gap:2px;padding-left:56px;position:relative}
+.tcard .bar i{flex:1;height:6px;border-radius:100px;background:var(--w12)}
+.tcard .bar u{position:absolute;left:56px;top:0;height:6px;width:3px;border-radius:100px;background:linear-gradient(95deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3))}
+.tcard.light .bar i{background:rgba(27,26,18,.15)}
+.tcard .spark{position:absolute;right:12px;top:12px}
+.tbox{border-radius:24px;border:1px solid var(--warm-b);padding:8px;background:linear-gradient(170deg,var(--card-1),var(--card-2))}
+.mini{position:relative;width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500}
+.mini svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.mini b{position:relative;font-weight:500}
+
+/* tests list */
+.tests{display:flex;flex-direction:column}
+.titem{display:flex;gap:12px;padding:12px 16px}
+.titem .rail{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
+.titem .num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;flex:none}
+.titem .num.gold{border:4px solid var(--w20);background:linear-gradient(99deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3));color:var(--ink);background-clip:padding-box}
+.titem .num.dash{border:1px dashed var(--w20);color:var(--w70)}
+.titem .num.done{background:linear-gradient(118deg,var(--light-1),var(--light-2));color:var(--ink)}
+.titem .rail u{flex:1;width:1px;background:var(--w20)}
+.tav{flex:1;min-width:0;border-radius:24px;border:1px solid var(--gold-1);padding:16px;display:flex;flex-direction:column;gap:16px;position:relative}
+.tav h2{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:32px;line-height:36px;margin-top:4px}
+.tav .meta{font-size:14px;font-weight:500;margin-top:4px}
+.gbtn{height:50px;border-radius:99px;display:flex;align-items:center;padding:0 6px 0 20px;color:var(--accent);font-size:16px;font-weight:500;
+  background:linear-gradient(132deg,var(--green-1),var(--green-2) 45%,var(--green-3));transition:transform .15s}
+.gbtn:active{transform:scale(.98)}
+.gbtn span{flex:1;text-align:center}
+.gbtn i{width:38px;height:38px;border-radius:99px;display:flex;align-items:center;justify-content:center;background:linear-gradient(118deg,var(--light-1),var(--light-2));color:var(--ink)}
+.tlock{flex:1;display:flex;flex-direction:column;gap:8px}
+.tlock b{font-size:18px;font-weight:600;display:block;margin-bottom:4px}
+
+/* share */
+.sharecard{position:relative;width:307px;height:426px;margin:0 auto;filter:drop-shadow(0 -2px 2px rgba(191,218,34,.5)) drop-shadow(4px 2px 2.65px rgba(191,218,34,.5))}
+.sharecard .img{position:absolute;left:13px;top:13px;width:281px;height:400px;border:4px solid var(--gold-1);border-radius:24px;overflow:hidden}
+.sharecard .img img{width:100%;height:100%;object-fit:cover;display:block}
+.sharecard .img::after{content:"";position:absolute;left:0;right:0;bottom:0;height:200px;background:linear-gradient(rgba(23,58,71,0),var(--deep))}
+.sharecard .tags{position:absolute;left:25px;top:25px;width:257px;display:flex;flex-wrap:wrap;gap:4px;z-index:1}
+.sharecard .tags span{height:32px;padding:0 12px;border-radius:100px;display:inline-flex;align-items:center;font-size:12px;font-weight:500;background:var(--w12);border:1px solid var(--w20);-webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px)}
+.sharecard .name{position:absolute;left:25px;top:353px;z-index:1;font-size:32px;line-height:36px;white-space:nowrap}
+.sharecard .name .acc{font-size:44px;line-height:40px;color:#fff}
+.views{margin:20px 16px 0;border-radius:24px;padding:8px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.views .hd{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:500}
+.views .hd b{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:32px;line-height:36px}
+.views .hd small{font-size:12px;color:var(--w70)}
+.milestones{display:flex;align-items:flex-start;gap:4px}
+.milestones .m{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:500;color:var(--w70)}
+.milestones .m:first-child{color:#fff}
+.milestones .dot{width:28px;height:28px;border-radius:50%;border:1px dashed var(--w20);flex:none}
+.milestones .line{flex:1;height:1px;background:var(--w20);margin-top:14px}
+
+/* ===== 4 · Test (swipe cards) ===== */
+.qhead{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 20px}
+.qhead p{font-size:16px;font-weight:500}
+.qring{position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:12px;font-variant-numeric:tabular-nums}
+.qring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.qring .arc{transition:stroke-dashoffset .6s var(--ease)}
+.deck{position:relative;height:299px;margin:20px 16px 0}
+.qcard{position:absolute;left:0;right:0;top:26px;height:253px;border-radius:34px;border:1px solid var(--w20);padding:20px 24px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;
+  background:linear-gradient(131deg,var(--light-1),var(--light-2));color:var(--ink);transform-origin:50% 0;will-change:transform;touch-action:pan-y;
+  transition:transform .55s var(--ease),opacity .45s ease,box-shadow .45s}
+.qcard p{font-weight:300;font-size:26px;line-height:30px;letter-spacing:-.58px;max-width:315px;transition:opacity .3s}
+.qcard .chip{transition:opacity .3s}
+.qcard.p0{z-index:3;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+.qcard.p1{z-index:2;transform:translateY(-13px) scaleX(.9446);opacity:.5}
+.qcard.p2{z-index:1;transform:translateY(-26px) scaleX(.845);opacity:.2}
+.qcard.p3{z-index:0;transform:translateY(-34px) scaleX(.8);opacity:0}
+.qcard.p1 p,.qcard.p1 .chip,.qcard.p2 p,.qcard.p2 .chip,.qcard.p3 p,.qcard.p3 .chip{opacity:0}
+.qcard.gone{z-index:4;opacity:0;pointer-events:none}
+.qcard.drag{transition:none}
+.answer{display:flex;flex-direction:column;align-items:center;gap:16px;margin:0 16px}
+.answer .lab{font-family:var(--font-display);font-style:italic;font-size:32px;line-height:36px;height:36px;transition:opacity .2s}
+.dots{display:flex;justify-content:space-between;width:100%;padding:0 10px}
+.dots button{width:56px;height:56px;display:flex;align-items:center;justify-content:center}
+.dots i{display:block;border-radius:50%;border:1px solid var(--w20);transition:width .3s var(--ease),height .3s var(--ease),background .3s,box-shadow .3s}
+.dots .n i{background:var(--neg)}.dots .z i{background:rgba(255,255,255,.3)}.dots .y i{background:var(--pos)}
+.dots .s42 i{width:42px;height:42px}.dots .s32 i{width:32px;height:32px}.dots .s22 i{width:22px;height:22px}
+.dots button.sel i{background:linear-gradient(135deg,var(--light-1),var(--light-2));border-color:var(--light-1);box-shadow:0 0 30px rgba(255,255,255,.5)}
+.dots button.s22.sel i{width:32px;height:32px}
+.dots button:active i{transform:scale(.92)}
+.ends{display:flex;justify-content:space-between;width:100%;padding:0 18px;font-size:14px;font-weight:600;color:var(--w70)}
+.qact{position:absolute;left:16px;right:16px;bottom:120px;z-index:21}
+
+/* modal */
+.scrim{position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .35s,visibility 0s .35s}
+.scrim.on{opacity:1;visibility:visible;transition:opacity .35s,visibility 0s}
+.modal{position:absolute;left:16px;right:16px;top:50%;z-index:51;border-radius:36px;border:1px solid var(--w20);background:var(--screen);padding:12px;
+  transform:translateY(-50%) scale(.9);opacity:0;visibility:hidden;transition:transform .5s var(--ease),opacity .3s,visibility 0s .5s}
+.modal.on{transform:translateY(-50%);opacity:1;visibility:visible;transition:transform .5s var(--ease),opacity .3s,visibility 0s}
+.modal .x{margin-left:auto}
+.modal .body{display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 10px 10px;text-align:center}
+.modal .body>div{display:flex;flex-direction:column;align-items:center;gap:12px}
+.modal h2{font-family:var(--font-display);font-style:italic;font-weight:400;font-size:44px;line-height:40px}
+.sprout path.stem{stroke-dasharray:60;stroke-dashoffset:60}
+.modal.on .sprout path.stem{animation:drawIn 1.1s .25s var(--ease) forwards}
+@keyframes drawIn{to{stroke-dashoffset:0}}
+.modal.on .sprout{animation:pop .6s .1s var(--ease) both}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+
+.toast{position:absolute;left:50%;top:62px;z-index:70;transform:translate(-50%,-20px);opacity:0;pointer-events:none;
+  padding:10px 16px;border-radius:100px;background:rgba(15,38,29,.92);border:1px solid var(--warm-b);font-size:14px;font-weight:500;white-space:nowrap;
+  transition:opacity .3s,transform .4s var(--ease)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* real phone: full screen */
+@media (max-width:500px){
+  :root{--top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px)}
+  html,body{height:var(--appH,100%);overflow:hidden;overscroll-behavior:none}
+  body{padding:0;display:block;background:var(--screen)}
+  .fit{width:100%;height:var(--appH,100%);transform:none!important}
+  .phone{width:100%;height:100%;border-radius:0;box-shadow:none}
+  .status,.home{display:none}
+  .stage{height:calc(100% - 151px)}
+  .gift-top{top:calc(var(--top) + 12px)}
+  .gift-msg{top:auto;bottom:calc(var(--bot) + 140px);height:124px}
+  .gift-bot{padding-bottom:calc(var(--bot) + 16px)}
+  .gift-bot .cta{bottom:calc(var(--bot) + 16px)}
+  .scroll{padding-top:var(--top)}
+  .hero{margin-top:calc(-1 * var(--top))}
+  .hero-top{top:calc(var(--top) + 12px)}
+  .tabbar{padding-bottom:calc(var(--bot) + 12px)}
+  .tab .scroll{padding-bottom:calc(var(--bot) + 110px)}
+  .cert-bot{padding-bottom:calc(var(--bot) + 16px)}
+  .qact{bottom:calc(var(--bot) + 92px)}
+  .toast{top:calc(var(--top) + 10px)}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+</style>
+
+<div class="fit" id="fit">
+<div class="phone" id="phone">
+  <div class="status" aria-hidden="true">
+    <b>9:41</b>
+    <div class="levels">
+      <svg width="19" height="12" viewBox="0 0 19 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="#fff"><path d="M8.5 2.4c2.3 0 4.4.9 6 2.4l1.2-1.2A10.2 10.2 0 0 0 8.5.7 10.2 10.2 0 0 0 1.3 3.6l1.2 1.2a8.5 8.5 0 0 1 6-2.4Zm0 3.4c1.4 0 2.6.5 3.6 1.4l1.2-1.2a6.8 6.8 0 0 0-9.6 0l1.2 1.2c1-.9 2.2-1.4 3.6-1.4Zm0 3.4c.5 0 .9.2 1.2.5L8.5 11 7.3 9.7c.3-.3.7-.5 1.2-.5Z"/></svg>
+      <svg width="28" height="13" viewBox="0 0 28 13"><rect x=".5" y=".5" width="24" height="12" rx="3.8" fill="none" stroke="#fff" stroke-opacity=".35"/><rect x="2.5" y="2.5" width="20" height="8" rx="2.2" fill="#fff"/><path d="M26 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" fill="#fff" fill-opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <!-- 1 · Переход по ссылке → Анимация раскрытия → Цветок раскрылся -->
+  <section class="scr cur" id="s-gift" aria-label="Живой подарок">
+    <div class="stage" id="stage" role="button" tabindex="0" aria-label="Прижми и удерживай, чтобы открыть цветок">
+      <video id="vWait" src="media/wait.mp4" poster="media/wait_poster.jpg" muted playsinline loop autoplay preload="auto"></video>
+      <video id="vReveal" src="media/reveal.mp4" poster="media/reveal_first.jpg" muted playsinline preload="auto"></video>
+      <div class="still"><img src="media/rose_open.jpg" alt=""></div>
+      <div class="touch" aria-hidden="true">
+        <span class="wave"></span><span class="wave"></span>
+        <span class="r1"></span><span class="r2"></span>
+        <span class="core"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M2.97 9.47a.7.7 0 0 1-.62-1.05C3.25 6.9 6 3.39 12 3.39c2.6 0 4.88.68 6.77 2.03 1.56 1.1 2.44 2.35 2.85 2.95a.7.7 0 0 1-1.18.79C19.69 8.08 17.39 4.78 12 4.78c-5.26 0-7.64 3.03-8.42 4.33a.7.7 0 0 1-.61.36Z"/><path d="M15.02 23.25a.7.7 0 0 1-.18-.02c-4.35-1.08-5.97-5.43-6.04-5.61l-.01-.04c-.04-.13-.91-3.11.43-4.86.61-.8 1.55-1.2 2.79-1.2 1.15 0 1.97.35 2.54 1.09.47.6.66 1.35.84 2.06.38 1.5.66 2.28 2.24 2.36.7.04 1.15-.37 1.41-.72.7-.94.82-2.48.3-3.84-.68-1.75-3.09-5.06-7.34-5.06-1.81 0-3.48.58-4.82 1.68-1.1.9-1.98 2.19-2.4 3.5-.78 2.45.24 6.3.25 6.34a.7.7 0 0 1-.51.86.7.7 0 0 1-.88-.5c-.05-.18-1.14-4.28-.24-7.12.99-3.07 4.03-6.16 8.6-6.16 2.11 0 4.1.72 5.77 2.07 1.29 1.06 2.35 2.47 2.9 3.89.7 1.81.51 3.84-.48 5.16-.66.89-1.6 1.35-2.64 1.3-2.71-.14-3.2-2.03-3.56-3.41-.36-1.42-.6-2.1-2-2.1-.76 0-1.3.21-1.64.65-.46.6-.49 1.53-.44 2.21.03.47.11.94.24 1.4.11.28 1.56 3.84 5.04 4.7a.7.7 0 0 1-.17 1.37Z"/><path d="M9.44 22.93a.7.7 0 0 1-.53-.22c-1.74-1.83-2.72-3.87-3.1-6.43v-.01c-.2-1.7.1-4.09 1.6-5.74 1.1-1.21 2.65-1.83 4.6-1.83 2.3 0 4.1 1.07 5.23 3.09.82 1.47.98 2.93.99 2.99a.7.7 0 0 1-1.43.15 6.9 6.9 0 0 0-.84-2.5c-.87-1.54-2.2-2.32-3.96-2.32-1.52 0-2.7.46-3.52 1.36-1.18 1.3-1.41 3.3-1.25 4.63.33 2.26 1.2 4.06 2.73 5.67a.7.7 0 0 1-.52 1.16Z"/></svg></span>
+      </div>
+    </div>
+    <div class="topfade"></div>
+    <div class="botfade"></div>
+    <div class="gift-top">
+      <div class="segs" id="gSegs"><i class="on"></i><i></i><i></i></div>
+      <span class="pill">от Маши</span>
+    </div>
+    <div class="gift-msg">
+      <div class="msg m1">
+        <div><p class="l1">Тебе отправили</p><p class="l2 acc">живой подарок</p></div>
+        <p class="d">Цветок уже знает о тебе три вещи. Открой, чтобы узнать какие.</p>
+      </div>
+      <div class="msg m2">
+        <div><p class="l1">Так тебя видит</p><p class="l2 acc">отправитель</p></div>
+        <div class="traits"><span class="glass">Нежность</span><span class="glass">Романтичность</span><span class="glass">Чувственность</span></div>
+      </div>
+    </div>
+    <div class="gift-bot">
+      <p class="hint"><b id="hintText">Прижми палец к куполу и удерживай</b></p>
+      <div class="holdbar"><i id="holdFill"></i></div>
+      <button class="cta" id="toCert" tabindex="-1"><span class="lbl">Что внутри?</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></span></button>
+    </div>
+  </section>
+
+  <!-- 2 · Сертификат -->
+  <section class="scr" id="s-cert" aria-label="Сертификат">
+    <div class="glow"></div>
+    <div class="scroll" style="padding-bottom:170px">
+      <div class="cert-head">
+        <div class="segs"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div><p class="sub">В твоём цветке спрятан</p><h1 class="h1">Подарочный сертификат</h1></div>
+      </div>
+      <div class="ticket">
+        <div class="pic"><img src="media/brand_big_ga.jpg" alt="Золотое Яблоко"></div>
+        <div class="stub light"><p>Твой навсегда, забрать можешь в любой момент</p><b>15 000 ₽</b></div>
+      </div>
+      <div class="grow">
+        <p>Но если ты оставишь цветок, он будет расти вместе с тобой</p>
+        <div class="first"><span class="chip light">Сегодня</span><p>Первый тест на 2 минуты — в цветке появится часть тебя</p></div>
+        <div>
+          <div class="step"><div class="rail"><i></i><u></u></div><div><span class="chip light">Каждый день</span>Поливай — гены крепнут. Показывай друзьям — цветок получит рамку.</div></div>
+          <div class="step" style="margin-top:8px"><div class="rail"><i></i></div><div><span class="chip light">Через год</span>Секретный ген — только у тех, кто сохранил цветок живым.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cert-bot">
+      <button class="cta" id="toApp"><span class="lbl">Начать жить с цветком</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></span></button>
+      <button class="ghost" id="takeNow">Забрать подарок сейчас</button>
+    </div>
+  </section>
+
+  <!-- 3 · Приложение цветка -->
+  <section class="scr" id="s-app" aria-label="Мой цветок">
+
+    <!-- Мой цветок -->
+    <div class="tab on" id="t-home">
+      <div class="scroll">
+        <div class="hero">
+          <img src="media/rose_open.jpg" alt="Твой цветок">
+          <div class="hero-top"><span class="pill">Открыт сегодня</span><button class="roundbtn" id="ticketBtn" aria-label="Сертификат"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"><path d="M3 7.5c0-1 .8-1.8 1.8-1.8h14.4c1 0 1.8.8 1.8 1.8v2a2.5 2.5 0 0 0 0 5v2c0 1-.8 1.8-1.8 1.8H4.8c-1 0-1.8-.8-1.8-1.8v-2a2.5 2.5 0 0 0 0-5v-2Z"/><path d="M15 6v2.2M15 11v2M15 15.8V18" stroke-linecap="round"/></svg></button></div>
+        </div>
+        <div class="genes">
+          <p class="xs">Нажми на ген, чтобы поливать его. Цифра в кольце — ступень, кольцо — прогресс внутри неё.</p>
+          <div class="row" id="geneRow"></div>
+        </div>
+        <div class="water">
+          <div><span class="xs">Цель полива</span><span class="acc" id="goalName">Нежность</span></div>
+          <button class="wbtn" id="waterBtn" aria-label="Полить">
+            <svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="45" fill="none" stroke="rgba(244,207,124,.18)" stroke-width="4"/><circle id="waterArc" cx="48" cy="48" r="45" fill="none" stroke="url(#gGold)" stroke-width="4" stroke-linecap="round" stroke-dasharray="282.7" stroke-dashoffset="212" style="transition:stroke-dashoffset .8s cubic-bezier(.32,.72,0,1)"/></svg>
+            <span class="disc"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 3c2.5 3.3 5 5.8 5 9.1A5 5 0 0 1 10 17a5 5 0 0 1-5-4.9C5 8.8 7.5 6.3 10 3Z" fill="#14111a"/></svg>Полить</span>
+            <svg class="drop" viewBox="0 0 14 14" style="--dx:-14px"><path d="M7 1c1.8 2.4 3.5 4.1 3.5 6.5a3.5 3.5 0 0 1-7 0C3.5 5.1 5.2 3.4 7 1Z" fill="#fbe7bf"/></svg>
+            <svg class="drop" viewBox="0 0 14 14" style="--dx:16px;animation-delay:.12s"><path d="M7 1c1.8 2.4 3.5 4.1 3.5 6.5a3.5 3.5 0 0 1-7 0C3.5 5.1 5.2 3.4 7 1Z" fill="#f4cf7c"/></svg>
+            <svg class="drop" viewBox="0 0 14 14" style="--dx:2px;animation-delay:.24s"><path d="M7 1c1.8 2.4 3.5 4.1 3.5 6.5a3.5 3.5 0 0 1-7 0C3.5 5.1 5.2 3.4 7 1Z" fill="#fff3d1"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ДНК -->
+    <div class="tab" id="t-dna">
+      <div class="glow"></div>
+      <div class="scroll">
+        <div class="page-head"><h1 class="h1">ДНК твоего цветка</h1><p class="sub">Полив усиливает только выбранный ген. Он останется целью, пока ты его не сменишь.</p></div>
+        <div class="effects">
+          <div class="glass"><div><span class="big">+10%</span><span class="xs">раз в 6 часов</span></div><span class="ico"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7.5 2C9.25 4.35 11 6.12 11 8.47A3.5 3.5 0 0 1 7.5 12 3.5 3.5 0 0 1 4 8.47C4 6.12 5.75 4.35 7.5 2Z" fill="#185844"/></svg></span></div>
+          <div class="glass"><div><span class="big">−1%</span><span class="xs">всем генам ночью</span></div><span class="ico"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M12 7.75A4.9 4.9 0 1 1 6.25 2a4.07 4.07 0 0 0 5.75 5.75Z" fill="#185844"/></svg></span></div>
+          <div class="glass wide"><span class="xs">До полива</span><span class="big" id="countdown" style="margin:6px 0 0;font-variant-numeric:tabular-nums">5:50</span></div>
+        </div>
+        <div class="traitlist" id="dnaList"></div>
+      </div>
+    </div>
+
+    <!-- Тесты -->
+    <div class="tab" id="t-tests">
+      <div class="glow"></div>
+      <div class="scroll">
+        <div class="page-head"><h1 class="h1">Тесты 3</h1><p class="sub">Три коротких опросника. Каждый добавляет в ДНК цветка один ген — тот, что опишет тебя, а не то, каким тебя видят другие.</p></div>
+        <div class="tests">
+          <div class="titem">
+            <div class="rail"><span class="num gold" id="t1num">1</span><u></u></div>
+            <div class="tav light" id="t1card">
+              <svg class="spark" style="position:absolute;right:12px;top:12px" width="12" height="12" viewBox="0 0 12 12"><path d="M6 0l1.1 4.9L12 6 7.1 7.1 6 12 4.9 7.1 0 6l4.9-1.1L6 0Z" fill="url(#gGold)"/></svg>
+              <div><span class="chip" id="t1chip">Доступен</span><h2>Код первого впечатления</h2><p class="meta" id="t1meta">Ген: откроется после прохождения</p></div>
+              <button class="gbtn" id="startTest"><span id="t1btn">Пройти тест</span><i><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#14111a" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></i></button>
+            </div>
+          </div>
+          <div class="titem">
+            <div class="rail"><span class="num dash">3</span><u></u></div>
+            <div class="tlock"><span class="xs">ЗАКРЫТ</span><div><b>Поле влияния</b><span class="sub">Ген: откроется после прохождения</span></div></div>
+          </div>
+          <div class="titem">
+            <div class="rail"><span class="num dash">7</span></div>
+            <div class="tlock"><span class="xs">ЗАКРЫТ</span><div><b>Индекс глубинных ценностей</b><span class="sub">Ген: откроется после прохождения</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Поделиться -->
+    <div class="tab" id="t-share">
+      <div class="glow"></div>
+      <div class="scroll" style="padding-bottom:200px">
+        <div class="page-head"><h1 class="h1">Что увидят друзья</h1></div>
+        <div class="sharecard">
+          <div class="img"><img src="media/rose_open.jpg" alt=""></div>
+          <div class="tags"><span>Мудрость</span><span>Доброта</span><span>Верность</span><span>Харизма</span></div>
+          <p class="name">Цветок <span class="acc">Ани</span></p>
+        </div>
+        <div class="views glass">
+          <div class="hd"><span>Просмотры</span><span><b>0</b><small>/100</small></span></div>
+          <div class="milestones">
+            <div class="m"><span style="display:flex;align-items:center;gap:4px;width:124px"><i class="dot"></i><i class="line" style="margin-top:0"></i></span><span>100<br>Востребованность</span></div>
+            <div class="m" style="align-items:center"><i class="dot"></i><span style="text-align:center">1000<br>Признание</span></div>
+            <div class="m" style="flex:1;align-items:flex-end"><span style="display:flex;align-items:center;gap:4px;width:100%"><i class="line" style="margin-top:0"></i><i class="dot"></i></span><span style="text-align:right">10 000<br>Слава</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="qact" style="bottom:120px" id="shareAct"><button class="cta" id="shareBtn"><span class="lbl">Поделиться</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="#fff"><path d="M3.55 14.39V8.84a.7.7 0 0 1 1.4 0v5.55c0 .4.33.71.74.71h8.62c.41 0 .74-.31.74-.71V8.84a.7.7 0 0 1 1.4 0v5.55c0 1.14-.96 2.06-2.14 2.06H5.69c-1.18 0-2.14-.92-2.14-2.06Z"/><path d="M9.61 2.37c.27-.17.65-.15.89.09l2.87 2.77a.66.66 0 0 1 0 .96.72.72 0 0 1-.99 0L10 3.89 7.62 6.19a.72.72 0 0 1-.99 0 .66.66 0 0 1 0-.96L9.5 2.46l.11-.09Z"/><path d="M9.3 10.4V2.94a.7.7 0 0 1 1.4 0v7.46a.7.7 0 0 1-1.4 0Z"/></svg></span></button></div>
+    </div>
+
+    <!-- Тест: Поле влияния -->
+    <div class="tab" id="t-quiz">
+      <div class="glow"></div>
+      <div class="scroll" style="overflow:hidden">
+        <div class="qhead">
+          <button class="roundbtn" id="qBack" aria-label="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button>
+          <p>Поле влияния</p>
+          <div class="qring"><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/><circle class="arc" id="qArc" cx="20" cy="20" r="17" fill="none" stroke="url(#gGold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="106.8" stroke-dashoffset="96"/></svg><span id="qCount">1/10</span></div>
+        </div>
+        <div class="deck" id="deck"></div>
+        <div class="answer">
+          <p class="lab" id="qLabel">Выбери ответ</p>
+          <div class="dots" id="dots">
+            <button class="n s42" data-v="1" aria-label="Нет"><i></i></button>
+            <button class="n s32" data-v="2" aria-label="Скорее нет"><i></i></button>
+            <button class="z s22" data-v="3" aria-label="Затрудняюсь"><i></i></button>
+            <button class="y s32" data-v="4" aria-label="Скорее да"><i></i></button>
+            <button class="y s42" data-v="5" aria-label="Да"><i></i></button>
+          </div>
+          <div class="ends"><span>Нет</span><span>Да</span></div>
+        </div>
+      </div>
+      <div class="qact"><button class="cta" id="qNext" aria-disabled="true"><span class="lbl" id="qNextLbl">Далее</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></span></button></div>
+    </div>
+
+    <nav class="tabbar" aria-label="Разделы">
+      <div class="tabs" id="tabs">
+        <button class="on" data-t="t-home"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M15 12a3 3 0 0 1-3 3m3-3a3 3 0 0 0-3-3m0 0V7.5A4.5 4.5 0 1 1 16.5 12H15m-3 3a3 3 0 0 1-3-3m0 0H7.5A4.5 4.5 0 1 0 12 16.5V15m0-6a3 3 0 0 0-3 3m7.5 0a4.5 4.5 0 1 1-4.5 4.5M7.5 12A4.5 4.5 0 1 1 12 7.5M8 8l1.88 1.88m4.24 0L16 8m-8 8 1.88-1.88m4.24 0L16 16"/></svg>Мой цветок</button>
+        <button data-t="t-dna"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M10 16l1.5 1.5M14 8l-1.5-1.5M15 2c-1.8 2-2.52 4-2.81 6M16.5 10.5l1 1M17 6l-2.89-2.89M2 15c6.67-6 13.33 0 20-6m-2 0 .89.89M3.11 14.11 4 15m2.5-2.5 1 1M7 18l2.89 2.89M9 22c1.8-2 2.52-4 2.81-6"/></svg>ДНК</button>
+        <button data-t="t-tests"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff"><rect x="5.75" y="3.75" width="12.5" height="16.5" rx="1.25" stroke-width="1.5"/><rect x="8.5" y="1.5" width="7" height="2" rx=".5"/><path d="M9.5 9.75h5M9.5 13.75h5M9.5 17.75h5" stroke-width="1.5" stroke-linecap="round"/></svg>Тесты</button>
+        <button data-t="t-share"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><path d="M20.5 12a8.5 8.5 0 0 1-8.5 8.5m8.5-8.5A8.5 8.5 0 0 0 12 3.5M20.5 12h-17M12 20.5A8.5 8.5 0 0 1 3.5 12M12 20.5A12.3 12.3 0 0 1 8.6 12 12.3 12.3 0 0 1 12 3.5m0 17a12.3 12.3 0 0 0 3.4-8.5A12.3 12.3 0 0 0 12 3.5m0 0A8.5 8.5 0 0 0 3.5 12"/></svg>Поделиться</button>
+      </div>
+    </nav>
+
+    <div class="scrim" id="scrim"></div>
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+      <div style="display:flex"><button class="roundbtn x" id="mClose" aria-label="Закрыть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="body">
+        <svg class="sprout" width="90" height="90" viewBox="0 0 90 90" fill="none"><circle cx="45" cy="45" r="38.9" fill="#0F261D" stroke="#fff" stroke-opacity=".12" stroke-width="6.1"/><path class="stem" d="M45 60.75V45M45 45c0-7-5.25-10.5-12.25-10.5 0 7 5.25 10.5 12.25 10.5Zm0 0c0-7 5.25-10.5 12.25-10.5 0 7-5.25 10.5-12.25 10.5Z" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/></svg>
+        <div><span class="chip">НОВЫЙ ГЕН</span><h2 id="mTitle">Уверенность</h2><p class="sub">Этот ген занял свободный слот в ДНК твоего цветка — первый из трёх, который ты создаёшь сам.</p></div>
+        <button class="cta" id="mGo"><span class="lbl">К цветку</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="home"></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3d1"/><stop offset=".45" stop-color="#f4cf7c"/><stop offset="1" stop-color="#e0a24f"/></linearGradient></defs></svg>
+</div>
+</div>
+
+<script>
+(()=>{
+  const $=id=>document.getElementById(id);
+  const phone=$('phone');
+
+  /* ---------- navigation between top-level screens ---------- */
+  let cur='s-gift';
+  function go(id){
+    if(id===cur)return;
+    const a=$(cur),b=$(id);
+    b.classList.add('cur');a.classList.remove('cur');a.classList.add('left');
+    setTimeout(()=>a.classList.remove('left'),520);
+    cur=id;
+  }
+
+  /* ---------- 1 · hold to open ---------- */
+  const gift=$('s-gift'),stage=$('stage'),vWait=$('vWait'),vRev=$('vReveal'),fill=$('holdFill'),hint=$('hintText'),segs=$('gSegs').children;
+  let state='wait',holding=false,raf=0;
+  vWait.play().catch(()=>{});
+  function setHint(t){if(hint.textContent===t)return;hint.style.opacity=0;setTimeout(()=>{hint.textContent=t;hint.style.opacity=1},180);}
+  function tick(){
+    if(vRev.duration)fill.style.width=Math.min(100,vRev.currentTime/vRev.duration*100)+'%';
+    if(state==='reveal')raf=requestAnimationFrame(tick);
+  }
+  function press(e){
+    if(state==='bloom')return;
+    if(e&&e.pointerType==='mouse'&&e.button!==0)return;
+    holding=true;gift.classList.add('pressing');
+    if(navigator.vibrate)try{navigator.vibrate(12)}catch(_){}
+    if(state==='wait'){state='reveal';gift.classList.add('revealing');segs[1].classList.add('on');}
+    setHint('Не отпускай — цветок оживает');
+    if(fake){fakeRun();return;}
+    const p=vRev.play();if(p)p.catch(()=>{fake=true;fakeRun();});
+    cancelAnimationFrame(raf);tick();
+  }
+  /* fallback when the browser can't play the clip: same timing, progress driven by a timer over the poster frame */
+  let fake=false,fakeT=0,fakeLast=0;
+  vRev.addEventListener('error',()=>{fake=true;if(holding)fakeRun();});
+  function fakeRun(){
+    fakeLast=performance.now();
+    (function f(t){if(!holding||state!=='reveal')return;fakeT+=(t-fakeLast)/1000;fakeLast=t;
+      fill.style.width=Math.min(100,fakeT/5*100)+'%';if(fakeT>=5){bloom();return;}requestAnimationFrame(f);})(fakeLast);
+  }
+  function release(){
+    if(!holding)return;holding=false;gift.classList.remove('pressing');
+    if(state!=='reveal')return;
+    vRev.pause();setHint('Прижми снова — он ещё не раскрылся');
+  }
+  stage.addEventListener('pointerdown',e=>{e.preventDefault();try{stage.setPointerCapture(e.pointerId)}catch(_){}press(e)});
+  stage.addEventListener('pointerup',release);
+  stage.addEventListener('pointercancel',release);
+  stage.addEventListener('lostpointercapture',release);
+  stage.addEventListener('contextmenu',e=>e.preventDefault());
+  stage.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();press()}});
+  stage.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')release()});
+  vRev.addEventListener('playing',()=>vWait.pause());
+  vRev.addEventListener('ended',bloom);
+  function bloom(){
+    if(state==='bloom')return;state='bloom';cancelAnimationFrame(raf);fill.style.width='100%';
+    gift.classList.remove('pressing');gift.classList.add('bloomed');segs[2].classList.add('on');
+    stage.removeAttribute('role');stage.tabIndex=-1;stage.style.cursor='default';
+    $('toCert').tabIndex=0;
+  }
+  $('toCert').addEventListener('click',()=>go('s-cert'));
+
+  /* ---------- 2 · certificate ---------- */
+  $('toApp').addEventListener('click',()=>go('s-app'));
+  $('takeNow').addEventListener('click',()=>toast('Сертификат отправлен на почту'));
+
+  /* ---------- 3 · tabs ---------- */
+  let curTab='t-home';
+  function showTab(id){
+    if(id===curTab)return;
+    $(curTab).classList.remove('on');$(id).classList.add('on');curTab=id;
+    const tabId=id==='t-quiz'?'t-tests':id;
+    document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===tabId));
+    const sc=$(id).querySelector('.scroll');if(sc&&id!=='t-quiz')sc.scrollTop=0;
+  }
+  document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.t)));
+  $('ticketBtn').addEventListener('click',()=>toast('Сертификат «Золотое Яблоко» · 15 000 ₽'));
+
+  /* genes: rings on home + list on DNA */
+  const GENES=[
+    {n:'Нежность',d:'Надёжность в отношениях и дружбе',lvl:1,p:1},
+    {n:'Романтичность',d:'Жизненный опыт, взвешенность суждений',lvl:1,p:1},
+    {n:'Чувственность',d:'Искреннее расположение к людям',lvl:1,p:1}];
+  let goal=0;
+  const C56=2*Math.PI*26, C44=2*Math.PI*20;
+  function arcOff(c,p){return c*(1-Math.max(.06,p/100))}
+  function renderGenes(){
+    $('geneRow').innerHTML=GENES.map((g,i)=>`<button class="gene${i===goal?' on':''}" data-g="${i}"><span class="ring"><svg width="56" height="56" viewBox="0 0 56 56"><circle class="trk" cx="28" cy="28" r="26" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="3"/><circle class="arc" cx="28" cy="28" r="26" fill="none" stroke="url(#gGold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="${C56.toFixed(1)}" stroke-dashoffset="${arcOff(C56,g.p*4).toFixed(1)}"/></svg><b>${g.lvl}</b></span>${g.n}</button>`).join('');
+    $('goalName').textContent=GENES[goal].n;
+    const g=GENES[goal];$('waterArc').style.strokeDashoffset=(282.7*(1-Math.max(.06,g.p*4/100))).toFixed(1);
+    $('dnaList').innerHTML='<p class="xs">От дарителя</p>'+GENES.map((g,i)=>{
+      const on=i===goal;const ring=`<span class="mini"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="${on?'rgba(27,26,18,.12)':'rgba(255,255,255,.12)'}" stroke-width="3"/><circle cx="22" cy="22" r="20" fill="none" stroke="url(#gGold)" stroke-width="3" stroke-linecap="round" stroke-dasharray="${C44.toFixed(1)}" stroke-dashoffset="${arcOff(C44,g.p*4).toFixed(1)}"/></svg><b>${g.lvl}</b></span>`;
+      const bar=`<div class="bar"><i></i><i></i><i></i><i></i>${on?'<i></i>':''}<u style="width:${Math.max(3,g.p*2.8)}px"></u></div>`;
+      const body=`<div class="top">${ring}<div>${on?'<span class="chip">Цель полива</span><span class="acc" style="font-size:32px;line-height:36px;color:var(--ink)">'+g.n+'</span><span class="xs" style="color:var(--ink);opacity:.5">'+g.d+'</span>':'<span style="font-size:16px">'+g.n+'</span><span class="xs">'+g.d+'</span>'}</div><span class="pct">${g.p}%</span></div>${bar}`;
+      return on?`<div class="tcard light"><svg class="spark" width="12" height="12" viewBox="0 0 12 12"><path d="M6 0l1.1 4.9L12 6 7.1 7.1 6 12 4.9 7.1 0 6l4.9-1.1L6 0Z" fill="url(#gGold)"/></svg>${body}</div>`:`<div class="tbox"><div class="tcard" style="border-radius:16px">${body}</div></div>`;
+    }).join('')+(NEWGENE?`<div class="tbox"><div class="tcard" style="border-radius:16px"><div class="top"><span class="mini" style="border-radius:50%;background:linear-gradient(118deg,var(--light-1),var(--light-2));color:var(--ink)"><b>1</b></span><div><span class="chip">Твой ген</span><span style="font-size:16px;margin-top:2px">Уверенность</span><span class="xs">Из теста «Поле влияния»</span></div><span class="pct">1%</span></div></div></div>`:'');
+  }
+  let NEWGENE=false;
+  $('geneRow').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;goal=+b.dataset.g;renderGenes();});
+  let lastWater=0;
+  $('waterBtn').addEventListener('click',()=>{
+    const w=$('waterBtn');w.classList.remove('pour');void w.offsetWidth;w.classList.add('pour');
+    const g=GENES[goal];g.p=Math.min(25,g.p+10);renderGenes();
+    toast('+10% · '+g.n);lastWater=Date.now();
+  });
+  renderGenes();
+  let cd=5*60+50;setInterval(()=>{cd=cd>0?cd-1:6*3600;const m=Math.floor(cd/60),s=cd%60;$('countdown').textContent=m+':'+String(s).padStart(2,'0');},1000);
+
+  /* ---------- 4 · test with swipe cards ---------- */
+  const Q=[
+    'Рядом со мной людям легче решиться на то, что они давно откладывали?',
+    'Ко мне приходят за советом даже малознакомые люди?',
+    'Когда я загораюсь идеей, другие быстро её подхватывают?',
+    'Мне удаётся переубедить собеседника без давления?',
+    'Люди замечают, когда меня нет в компании?',
+    'После разговора со мной у людей появляется больше сил?',
+    'Друзья доверяют мне решить, куда пойти и чем заняться?',
+    'Я легко нахожу слова, которые успокаивают других?',
+    'Близкие перенимают мои привычки и словечки?',
+    'В новой компании я быстро становлюсь своим?'];
+  const LABELS=['Выбери ответ','Нет','Скорее нет','Затрудняюсь','Скорее да','Да'];
+  const ans=new Array(Q.length).fill(0);
+  let qi=0,busy=false;
+  const deck=$('deck'),dots=$('dots'),qNext=$('qNext');
+  const cards=Q.map((q,i)=>{const c=document.createElement('div');c.className='qcard';c.innerHTML=`<span class="chip">Вопрос ${i+1}</span><p>${q}</p>`;deck.appendChild(c);return c;});
+  function layout(){
+    cards.forEach((c,i)=>{
+      c.classList.remove('p0','p1','p2','p3','gone');c.style.transform='';c.style.opacity='';
+      const d=i-qi;
+      if(d<0){c.classList.add('gone');c.style.transform=c.dataset.out||'translateX(-130%) rotate(-14deg)';}
+      else c.classList.add('p'+Math.min(d,3));
+    });
+    $('qCount').textContent=(qi+1)+'/'+Q.length;
+    $('qArc').style.strokeDashoffset=(106.8*(1-(qi+1)/Q.length)).toFixed(1);
+    syncAnswer();
+  }
+  function syncAnswer(){
+    const v=ans[qi];
+    dots.querySelectorAll('button').forEach(b=>{b.classList.toggle('sel',+b.dataset.v===v);b.setAttribute('aria-pressed',+b.dataset.v===v)});
+    const l=$('qLabel');const t=LABELS[v];if(l.textContent!==t){l.style.opacity=0;setTimeout(()=>{l.textContent=t;l.style.opacity=1},150);}
+    qNext.setAttribute('aria-disabled',v?'false':'true');
+    $('qNextLbl').textContent=qi===Q.length-1?'Завершить тест':'Далее';
+  }
+  dots.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||busy)return;ans[qi]=+b.dataset.v;syncAnswer();
+    if(navigator.vibrate)try{navigator.vibrate(8)}catch(_){}});
+  function next(dir){
+    if(busy||!ans[qi])return;
+    if(qi===Q.length-1){finish();return;}
+    busy=true;
+    const v=ans[qi];dir=dir||(v>3?1:-1);
+    cards[qi].dataset.out=`translateX(${dir*135}%) translateY(30px) rotate(${dir*16}deg)`;
+    qi++;layout();
+    setTimeout(()=>busy=false,420);
+  }
+  function prev(){
+    if(busy)return;
+    if(qi===0){showTab('t-tests');return;}
+    busy=true;qi--;layout();setTimeout(()=>busy=false,420);
+  }
+  qNext.addEventListener('click',()=>next());
+  $('qBack').addEventListener('click',prev);
+
+  /* drag the top card: past ~90px it flies off (only once an answer is picked) */
+  let drag=null;
+  deck.addEventListener('pointerdown',e=>{
+    const c=cards[qi];if(busy||!c.contains(e.target))return;
+    drag={x:e.clientX,y:e.clientY,c,dx:0,moved:false};
+  });
+  addEventListener('pointermove',e=>{
+    if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+    if(!drag.moved){if(Math.abs(dx)<6||Math.abs(dx)<Math.abs(dy))return;drag.moved=true;drag.c.classList.add('drag');try{deck.setPointerCapture(e.pointerId)}catch(_){}}
+    const k=ans[qi]?1:.25;drag.dx=dx*k;
+    drag.c.style.transform=`translateX(${drag.dx}px) rotate(${drag.dx/22}deg)`;
+    const nxt=cards[qi+1];if(nxt&&ans[qi]){const t=Math.min(1,Math.abs(drag.dx)/120);nxt.style.transform=`translateY(${-13+13*t}px) scaleX(${.9446+.0554*t})`;nxt.style.opacity=.5+.5*t;}
+  });
+  function endDrag(){
+    if(!drag)return;const d=drag;drag=null;if(!d.moved)return;
+    d.c.classList.remove('drag');
+    if(ans[qi]&&Math.abs(d.dx)>90&&qi<Q.length-1){next(Math.sign(d.dx));}
+    else if(ans[qi]&&Math.abs(d.dx)>90&&qi===Q.length-1){d.c.style.transform='';finish();}
+    else{d.c.style.transform='';const nxt=cards[qi+1];if(nxt){nxt.style.transform='';nxt.style.opacity='';}
+      if(!ans[qi])toast('Сначала выбери ответ');}
+  }
+  addEventListener('pointerup',endDrag);addEventListener('pointercancel',endDrag);
+
+  $('startTest').addEventListener('click',()=>{
+    if(NEWGENE){showTab('t-dna');return;}
+    qi=0;ans.fill(0);cards.forEach(c=>delete c.dataset.out);layout();showTab('t-quiz');
+  });
+  function finish(){
+    $('scrim').classList.add('on');$('modal').classList.add('on');setTimeout(()=>$('mGo').focus({preventScroll:true}),400);
+  }
+  function closeModal(to){
+    $('scrim').classList.remove('on');$('modal').classList.remove('on');
+    NEWGENE=true;renderGenes();
+    $('t1num').className='num done';$('t1num').textContent='✓';$('t1chip').textContent='Пройден';$('t1meta').textContent='Ген: Уверенность';$('t1btn').textContent='Смотреть в ДНК';
+    showTab(to);
+  }
+  $('mGo').addEventListener('click',()=>closeModal('t-home'));
+  $('mClose').addEventListener('click',()=>closeModal('t-tests'));
+  $('scrim').addEventListener('click',()=>closeModal('t-tests'));
+  addEventListener('keydown',e=>{if(e.key==='Escape'&&$('modal').classList.contains('on'))closeModal('t-tests');
+    if(curTab==='t-quiz'&&cur==='s-app'){if(e.key==='ArrowRight')next(1);if(e.key==='ArrowLeft')prev();if(/^[1-5]$/.test(e.key)){ans[qi]=+e.key;syncAnswer();}}});
+
+  /* share */
+  $('shareBtn').addEventListener('click',async()=>{
+    const url=location.href.split('#')[0];
+    if(navigator.share){try{await navigator.share({title:'Цветок Ани',text:'Посмотри, какой у меня живой цветок 🌹',url});return}catch(e){if(e&&e.name==='AbortError')return}}
+    try{await navigator.clipboard.writeText(url);toast('Ссылка скопирована')}catch(_){toast('Ссылка готова')}
+  });
+
+  /* toast */
+  let tT;function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('on'),2000);}
+
+  /* ---------- fit the phone to the viewport ---------- */
+  const fit=$('fit'),mobile=matchMedia('(max-width:500px)');
+  function appH(){
+    const sa=matchMedia('(display-mode:standalone)').matches||navigator.standalone===true;
+    const portrait=innerHeight>=innerWidth;
+    const full=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
+    document.documentElement.style.setProperty('--appH',(sa?Math.max(innerHeight,full):innerHeight)+'px');
+  }
+  function scale(){appH();if(mobile.matches){fit.style.transform='';return;}
+    const s=Math.min((innerWidth-48)/393,(innerHeight-60)/852,1);fit.style.transform='scale('+s+')';}
+  addEventListener('resize',scale);if(window.visualViewport)visualViewport.addEventListener('resize',scale);scale();
+})();
+</script>
+
+</body>
+</html>
