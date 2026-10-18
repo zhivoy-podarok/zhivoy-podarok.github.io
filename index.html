@@ -9,7 +9,7 @@
 <style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script>
 /* Safari may serve a cached copy for up to 10 min on GitHub Pages: compare with the server's version and reload if stale */
-(function(){var V='1792316587';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='1792330901';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -316,6 +316,13 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
 .under button{color:rgba(255,255,255,.7);text-decoration:underline;text-underline-offset:3px}
 @media (max-width:440px){.under{display:none}}
 @media (prefers-reduced-motion:reduce){.scr,.sheet,.scrim,.toast,.scr::after{transition-duration:.01s!important}}
+
+/* screen entrance: content rises in, staggered, on every forward step */
+.in{animation:rise .62s cubic-bezier(.32,.72,0,1) both;animation-delay:calc(var(--i,0) * 50ms + 90ms)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+.in-pop{animation:popIn .8s cubic-bezier(.32,.72,0,1) both;animation-delay:calc(var(--i,0) * 50ms + 90ms)}
+@keyframes popIn{from{opacity:0;transform:translateY(22px) scale(.94)}}
+@media (prefers-reduced-motion:reduce){.in,.in-pop{animation:none}}
 </style>
 
 <div class="fit" id="fit">
@@ -614,7 +621,36 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
       cur.classList.remove('cur','left');stack.pop();nxt.classList.remove('left');nxt.classList.add('cur');
     }
     $('stepName').textContent=NAMES[stack[stack.length-1]];
+    if(dir==='fwd')enter(id);
   }
+  /* micro-animations */
+  const ENTER={
+    's-intro':['.introTop h1','.duo>div','.together','.feat','.bnav .cta'],
+    's-brand':['.head>*','.brands>*','.bnav>*'],
+    's-amount':['.head>*','.bigBrand','p.sub','.amts>*','.bnav>*'],
+    's-type':['.head>*','.types>*','.bnav>*'],
+    's-traits':['.head>*','.grp','.bnav>*'],
+    's-pay':['.head>*','.prod','.price','.bnav>*'],
+    's-ready':['.card','.bnav>*'],
+  };
+  const POP=new Set(['.bigBrand','.prod','.card']);
+  function enter(id){
+    const sc=$(id);let i=0;
+    (ENTER[id]||[]).forEach(sel=>sc.querySelectorAll(sel).forEach(el=>{
+      el.classList.remove('in','in-pop');void el.offsetWidth;el.style.setProperty('--i',i++);el.classList.add(POP.has(sel)?'in-pop':'in');
+      el.addEventListener('animationend',function f(e){if(e.target!==el)return;el.classList.remove('in','in-pop');el.removeEventListener('animationend',f)});
+    }));
+    const seg=[...sc.querySelectorAll('.segs i.on')].pop();
+    if(seg&&seg.animate)seg.animate([{transform:'scaleX(0)',transformOrigin:'left'},{transform:'scaleX(1)',transformOrigin:'left'}],{duration:700,delay:200,easing:'cubic-bezier(.32,.72,0,1)',fill:'backwards'});
+  }
+  // a little "pop" on whatever was just picked (cards, amounts, types, chips)
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('[data-b],[data-a],[data-t],[data-c]');if(!t||t.disabled)return;
+    const attr=['b','a','t','c'].find(k=>t.dataset[k]!==undefined),val=t.dataset[attr],box=t.parentElement.id;
+    setTimeout(()=>{const n=document.querySelector('#'+box+' [data-'+attr+'="'+CSS.escape(val)+'"]');
+      if(n&&n.animate)n.animate([{transform:'scale(.95)'},{transform:'scale(1.035)'},{transform:'scale(1)'}],{duration:420,easing:'cubic-bezier(.32,.72,0,1)'});},0);
+  },true);
+  requestAnimationFrame(()=>enter('s-intro'));
   document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{
     if(b.getAttribute('aria-disabled')==='true')return;
     show(b.dataset.next,'fwd');
