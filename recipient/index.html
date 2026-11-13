@@ -447,57 +447,6 @@ p,h1,h2{margin:0}
 .under button{color:rgba(255,255,255,.7);text-decoration:underline;text-underline-offset:3px;padding:6px 10px}
 .under button:hover{color:#fff}
 
-/* ===== Будущее цветка: badge on «Тесты» + full-screen page with three possible futures ===== */
-.ph-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.fbadge{flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 10px;border-radius:100px;font-size:14px;font-weight:500;color:var(--accent);
-  background:linear-gradient(118deg,rgba(255,243,209,.14),rgba(224,162,79,.08));border:1px solid var(--warm-b);box-shadow:inset 0 1px 0 var(--w12);
-  animation:badgeGlow 3.2s ease-in-out infinite;transition:transform .15s}
-.fbadge:active{transform:scale(.95)}
-.fbadge svg{animation:badgeSpark 3.2s ease-in-out infinite}
-@keyframes badgeGlow{50%{box-shadow:inset 0 1px 0 var(--w12),0 0 18px rgba(244,207,124,.28)}}
-@keyframes badgeSpark{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(45deg) scale(1.15)}}
-
-.future{position:absolute;inset:0;z-index:30;background:var(--deep);overflow:hidden;visibility:hidden;opacity:0;transform:scale(1.03);
-  transition:opacity .45s ease,transform .6s var(--ease),visibility 0s .6s;touch-action:none;-webkit-user-select:none;user-select:none}
-.future.on{visibility:visible;opacity:1;transform:none;transition:opacity .45s ease,transform .6s var(--ease),visibility 0s}
-/* clip fitted by width (same 393×699 box as the dome on the gift screen); its lower edge sinks into the bottom gradient */
-/* the dome sits at x≈382/720 in all clips: widen and pull left so its axis lands on the screen centre */
-.fv{position:absolute;left:calc(-100% * 44 / 676);top:var(--fvTop,0px);width:calc(100% * 720 / 676);height:auto;aspect-ratio:720/1280;object-fit:fill;opacity:0;transform:scale(1.05);transform-origin:50% 40%;pointer-events:none}
-/* crossfade: the incoming clip fades in on top while the outgoing one stays fully visible underneath (no dip in brightness) */
-.fv.top{opacity:1;z-index:2;transform:none;transition:opacity .9s ease,transform 1.6s var(--ease)}
-.fv.under{opacity:1;z-index:1;transform:none;transition:none}
-.future .topfade{z-index:3;height:150px;background:linear-gradient(rgba(5,26,23,.7),rgba(5,26,23,0))}
-.ffade{position:absolute;left:0;right:0;bottom:0;top:var(--fadeTop,422px);z-index:3;pointer-events:none;
-  background:linear-gradient(rgba(5,26,23,0),rgba(5,26,23,.62) 28%,rgba(5,26,23,.92) 54%,var(--deep) 76%)}
-/* soft dark band right behind the text block, same idea as under the message on the gift screen */
-.fmsgs{position:relative}
-.fmsgs::before{content:"";position:absolute;left:-46px;right:-46px;top:-40px;bottom:-10px;z-index:-1;pointer-events:none;
-  background:linear-gradient(rgba(5,26,23,0),rgba(5,26,23,.4) 30%,rgba(5,26,23,.6) 60%);filter:blur(16px)}
-.ftop{position:absolute;left:16px;right:16px;top:66px;z-index:5;display:flex;flex-direction:column;gap:12px;transition:opacity .3s}
-.frow{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.frow p{font-size:16px;font-weight:500}
-.fbot{position:absolute;left:16px;right:16px;bottom:40px;z-index:5;display:flex;flex-direction:column;gap:20px;pointer-events:none;transition:opacity .3s}
-.fmsgs{display:grid}
-.fmsg{grid-area:1/1;display:flex;flex-direction:column;gap:12px;align-self:end}
-.fmsg>*{opacity:0;transform:translateY(12px);transition:opacity .35s ease,transform .45s var(--ease)}
-.fmsg.on>*{opacity:1;transform:none;transition:opacity .55s ease,transform .7s var(--ease)}
-.fmsg.on>:nth-child(1){transition-delay:.25s}.fmsg.on>:nth-child(2){transition-delay:.35s}
-.fmsg.on>:nth-child(3){transition-delay:.45s}.fmsg.on>:nth-child(4){transition-delay:.55s}
-.fcount{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.02em}
-.fmsg .l1{font-size:32px;line-height:36px;font-weight:400}
-.fmsg .l2{font-size:44px;line-height:40px;height:38px}
-.fmsg .d{font-size:14px;font-weight:500}
-.fmsg .traits span{opacity:1;transform:none}
-.fpick{display:flex;justify-content:center;gap:14px;pointer-events:auto}
-.fth{position:relative;width:56px;height:56px;border-radius:50%;padding:3px;background:var(--w12);border:0;
-  opacity:.55;transform:scale(.86);transition:opacity .35s ease,transform .45s var(--ease)}
-.fth::before{content:"";position:absolute;inset:0;border-radius:50%;padding:1.5px;opacity:0;transition:opacity .35s ease;
-  background:linear-gradient(135deg,var(--gold-1),var(--gold-2) 45%,var(--gold-3));
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-.fth img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
-.fth.on{opacity:1;transform:none;box-shadow:0 0 22px rgba(244,207,124,.3)}
-.fth.on::before{opacity:1}
-.fth:active{transform:scale(.8)}
 @media (max-width:500px){.under{display:none}}
 /* real phone: full screen */
 @media (max-width:500px){
@@ -521,24 +470,11 @@ p,h1,h2{margin:0}
   .cert-bot{padding-bottom:calc(var(--bot) + 16px)}
   .qact{bottom:calc(var(--bot) + 92px)}
   .toast{top:calc(var(--top) + 10px)}
-  .ftop{top:calc(var(--top) + 12px)}
-  .fbot{bottom:calc(var(--bot) + 16px)}
 }
 @media (max-width:500px) and (max-height:780px){
   /* short screens: the first message drops into the free space above the hint, onto the pedestal */
   .msg.m1{transform:translateY(36px)}
   #s-gift.bloomed .msg.m1{transform:translateY(26px)}
-}
-@media (max-height:780px){
-  /* short screens: drop the gene chips (the title already names the gene) and the hint, tighten the picker */
-  .fmsg .traits,.fbot .hint{display:none}
-  .fbot{gap:16px}
-  .fth{width:48px;height:48px}
-  .fmsg{gap:10px}
-}
-@media (max-height:680px){
-  .fmsg .l1{font-size:26px;line-height:30px}
-  .fmsg .l2{font-size:36px;line-height:34px;height:32px}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
 </style>
@@ -679,7 +615,7 @@ p,h1,h2{margin:0}
       <div class="glow"></div>
       <div class="scroll">
         <div class="design-dark-header">
-<div class="page-head"><div class="ph-row"><h1 class="h1">Тесты 3</h1><button class="fbadge" id="futureBtn"><svg width="14" height="14" viewBox="0 0 12 12"><path d="M6 0l1.1 4.9L12 6 7.1 7.1 6 12 4.9 7.1 0 6l4.9-1.1L6 0Z" fill="url(#gGold)"/></svg>Будущее цветка</button></div><p class="sub">Три коротких опросника. Каждый добавляет в ДНК цветка один ген — тот, что опишет тебя, а не то, каким тебя видят другие.</p></div>
+<div class="page-head"><h1 class="h1">Тесты 3</h1><p class="sub">Три коротких опросника. Каждый добавляет в ДНК цветка один ген — тот, что опишет тебя, а не то, каким тебя видят другие.</p></div>
         </div>
 <div class="tests">
           <div class="titem">
@@ -761,19 +697,6 @@ p,h1,h2{margin:0}
     </nav>
 
 
-    <!-- Будущее цветка -->
-    <div class="future" id="future" role="dialog" aria-modal="true" aria-label="Будущее цветка">
-      <video class="fv" src="media/fut2.mp4?v=1792574895" poster="media/fut2_poster.jpg?v=1792574895" muted playsinline loop preload="metadata"></video><video class="fv" src="media/fut3.mp4?v=1792574895" poster="media/fut3_poster.jpg?v=1792574895" muted playsinline loop preload="metadata"></video><video class="fv" src="media/fut4.mp4?v=1792574895" poster="media/fut4_poster.jpg?v=1792574895" muted playsinline loop preload="metadata"></video><video class="fv" src="media/fut1.mp4?v=1792574895" poster="media/fut1_poster.jpg?v=1792574895" muted playsinline loop preload="metadata"></video><video class="fv" src="media/fut5.mp4?v=1792574895" poster="media/fut5_poster.jpg?v=1792574895" muted playsinline loop preload="metadata"></video>
-      <div class="topfade"></div><div class="ffade"></div>
-      <div class="ftop">
-                <div class="frow"><button class="roundbtn" id="fBack" aria-label="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button><p>Будущее цветка</p><span class="roundbtn fcount" id="fCount" aria-live="polite">1/5</span></div>
-      </div>
-      <div class="fbot">
-        <div class="fmsgs"><div class="fmsg on"><div><p class="l1">Если победит</p><p class="l2 acc">Влияние</p></div><p class="d">Цветок нальётся малиновым, а вокруг купола разойдутся золотые круги — твоё поле влияния.</p><div class="traits"><span class="glass">Влияние</span><span class="glass">Уверенность</span></div></div><div class="fmsg"><div><p class="l1">Если победит</p><p class="l2 acc">Страсть</p></div><p class="d">Бутон раскроется до конца: алые лепестки с огненной каймой, как в самый яркий вечер.</p><div class="traits"><span class="glass">Чувственность</span><span class="glass">Смелость</span></div></div><div class="fmsg"><div><p class="l1">Если победит</p><p class="l2 acc">Нежность</p></div><p class="d">Лепестки станут персиково-розовыми с золотым отливом, а листья — будто отлиты из золота.</p><div class="traits"><span class="glass">Нежность</span><span class="glass">Забота</span></div></div><div class="fmsg"><div><p class="l1">Если победит</p><p class="l2 acc">Воображение</p></div><p class="d">Лепестки уйдут в глубокий сапфир, сердцевина вспыхнет золотом, а под куполом закружатся искры.</p><div class="traits"><span class="glass">Воображение</span><span class="glass">Интуиция</span></div></div><div class="fmsg"><div><p class="l1">Если победит</p><p class="l2 acc">Харизма</p></div><p class="d">Алые лепестки прорежут золотые прожилки, а от купола протянутся сияющие нити — к тем, кого ты притягиваешь.</p><div class="traits"><span class="glass">Харизма</span><span class="glass">Обаяние</span></div></div></div>
-        <div class="fpick" role="tablist" aria-label="Варианты"><button class="fth on" role="tab" data-i="0" aria-label="Вариант 1: Влияние"><img src="media/fut2_th.jpg?v=1792574895" alt=""></button><button class="fth" role="tab" data-i="1" aria-label="Вариант 2: Страсть"><img src="media/fut3_th.jpg?v=1792574895" alt=""></button><button class="fth" role="tab" data-i="2" aria-label="Вариант 3: Нежность"><img src="media/fut4_th.jpg?v=1792574895" alt=""></button><button class="fth" role="tab" data-i="3" aria-label="Вариант 4: Воображение"><img src="media/fut1_th.jpg?v=1792574895" alt=""></button><button class="fth" role="tab" data-i="4" aria-label="Вариант 5: Харизма"><img src="media/fut5_th.jpg?v=1792574895" alt=""></button></div>
-        <p class="hint"><span>Каким станет твой — решат тесты</span></p>
-      </div>
-    </div>
     <div class="scrim" id="scrim"></div>
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
       <div style="display:flex"><button class="roundbtn x" id="mClose" aria-label="Закрыть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -1139,45 +1062,6 @@ p,h1,h2{margin:0}
   });
 
 
-  /* ---------- Будущее цветка: three looping futures; switch by tapping a thumbnail or swiping the page.
-     The chosen clip crossfades in on top of the current one (no brightness dip), text re-enters staggered ---------- */
-  (()=>{
-    const F=$('future'),vids=[...F.querySelectorAll('.fv')],msgs=[...F.querySelectorAll('.fmsg')],ths=[...F.querySelectorAll('.fth')];
-    let cur=-1,tHide=0;
-    function go(n){
-      n=(n+vids.length)%vids.length;const old=vids[cur],v=vids[n];if(old===v)return;
-      clearTimeout(tHide);vids.forEach(x=>{if(x!==old&&x!==v){x.classList.remove('top','under');x.pause();}});
-      if(old){old.classList.remove('top');old.classList.add('under');}
-      v.classList.remove('top','under');void v.offsetWidth;try{v.currentTime=0}catch(_){}const p=v.play();if(p)p.catch(()=>{});v.classList.add('top');
-      tHide=setTimeout(()=>{if(old&&old!==vids[cur]){old.classList.remove('under');old.pause();}},950);
-      cur=n;$('fCount').textContent=(n+1)+'/'+vids.length;msgs.forEach((m,i)=>m.classList.toggle('on',i===n));ths.forEach((t,i)=>{t.classList.toggle('on',i===n);t.setAttribute('aria-selected',i===n)});
-    }
-    /* keep the flower in the free space above the text: the clip is never shrunk (that would open gaps at the sides),
-       it slides up as far as the header allows; the bottom darkening starts just above the text instead of at a fixed height */
-    function fit(){
-      const fr=F.getBoundingClientRect();if(!fr.height||!F.offsetWidth)return;
-      // measure in layout px: on desktop the whole phone is scaled with a transform, so screen px ≠ CSS px
-      const k=fr.width/F.offsetWidth,s0=F.offsetWidth/676,contentTop=(F.querySelector('.fmsgs').getBoundingClientRect().top-fr.top)/k,headBot=(F.querySelector('.frow').getBoundingClientRect().bottom-fr.top)/k;
-      const top=Math.min(0,Math.max(headBot-14-230*s0,contentTop+6-900*s0));
-      F.style.setProperty('--fvTop',top+'px');F.style.setProperty('--fadeTop',Math.max(0,contentTop-110)+'px');
-    }
-    addEventListener('resize',()=>{if(F.classList.contains('on'))fit()});
-    function open(){
-      vids.forEach(v=>{v.preload='auto';v.classList.remove('top','under');v.pause()});cur=-1;
-      F.classList.add('on');fit();go(0);stagger(F,'.ftop>*, .fpick, .fbot .hint');
-    }
-    function close(){F.classList.remove('on');setTimeout(()=>vids.forEach(v=>v.pause()),500);}
-    $('futureBtn').addEventListener('click',open);
-    $('fBack').addEventListener('click',close);
-    ths.forEach(t=>t.addEventListener('click',()=>go(+t.dataset.i)));
-    let sx=0,sy=0,down=false;
-    F.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;down=true;sx=e.clientX;sy=e.clientY;});
-    F.addEventListener('pointerup',e=>{if(!down)return;down=false;const dx=e.clientX-sx,dy=e.clientY-sy;
-      if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.2)go(cur+(dx<0?1:-1));});
-    F.addEventListener('pointercancel',()=>{down=false});
-    addEventListener('keydown',e=>{if(!F.classList.contains('on'))return;if(e.key==='Escape')close();if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);});
-  })();
-
   $('restart').addEventListener('click',()=>{const u=new URL(location.href);u.hash='';location.replace(u.toString());});
   /* toast */
   let tT;function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>el.classList.remove('on'),2000);}
@@ -1233,9 +1117,9 @@ p,h1,h2{margin:0}
 .cta::before{background:linear-gradient(105deg,rgba(255,255,255,0),rgba(255,255,255,.18) 35%,rgba(253,240,243,.75) 50%,rgba(255,255,255,.18) 65%,rgba(255,255,255,0))}
 .roundbtn{background:#e8dad6;border-color:#e3d3d0;color:#2a1520}
 .glow{background:radial-gradient(ellipse 424px 390px at 300px 184px,rgba(90,31,63,.2),rgba(90,31,63,0) 62%)}
-#s-gift,#s-seed,.future{background:var(--plum);color:#fff}
-#s-gift .acc,#s-seed .acc,.future .acc{color:#fff}
-#s-gift .sub,#s-gift .xs,#s-seed .sub,.future .sub{color:rgba(255,255,255,.82)}
+#s-gift,#s-seed{background:var(--plum);color:#fff}
+#s-gift .acc,#s-seed .acc{color:#fff}
+#s-gift .sub,#s-gift .xs,#s-seed .sub{color:rgba(255,255,255,.82)}
 #s-gift .stage{background:var(--plum)}
 #s-seed::after{background:linear-gradient(rgba(34,16,26,0),#22101a 50%)}
 .seedfade{background:linear-gradient(rgba(34,16,26,0),rgba(47,20,34,.55) 45%,rgba(34,16,26,.88))}
@@ -1316,15 +1200,9 @@ p,h1,h2{margin:0}
 .modal{background:#faf5f1;color:#2a1520;border-color:#e3d3d0}
 .modal .sub{color:#5e4a53}
 .toast{background:rgba(250,245,241,.92);color:#2a1520;border-color:#e3d3d0}
-.fbadge{color:#b23a5e;background:linear-gradient(118deg,rgba(184,50,90,.14),rgba(217,100,90,.08));border-color:#e3d3d0}
-.future .topfade{background:linear-gradient(rgba(34,16,26,.7),rgba(34,16,26,0))}
-.ffade{background:linear-gradient(rgba(34,16,26,0),rgba(34,16,26,.62) 28%,rgba(34,16,26,.92) 54%,#22101a 76%)}
-.fmsgs::before{background:linear-gradient(rgba(34,16,26,0),rgba(34,16,26,.4) 30%,rgba(34,16,26,.6) 60%)}
-.fth.on{box-shadow:0 0 22px rgba(178,58,94,.3)}
 #gGold stop:nth-child(1){stop-color:#b8325a}
 #gGold stop:nth-child(2){stop-color:#c84b5a}
 #gGold stop:nth-child(3){stop-color:#d9645a}
-@keyframes badgeGlow{50%{box-shadow:inset 0 1px 0 var(--w12),0 0 18px rgba(178,58,94,.28)}}
 
 /* Цвета встроенных SVG, у которых исходный цвет задан атрибутом. */
 .tabs svg [stroke="#fff"],.tabs svg[stroke="#fff"]{stroke:#2a1520}
@@ -1336,7 +1214,6 @@ p,h1,h2{margin:0}
  #t-tests .scroll{background-size:100% 141px}
  #t-share .scroll{background-size:100% 514px}
 }
-.fbadge{color:#b23a5e}
 .cta .ic svg[stroke="#fff"],.cta .ic svg [stroke="#fff"],
 .roundbtn svg[stroke="#fff"],.roundbtn svg [stroke="#fff"]{stroke:#2a1520}
 .effects .ico svg[stroke="#14111a"],.effects .ico svg [stroke="#14111a"]{stroke:#2a1520}
@@ -1350,7 +1227,7 @@ p,h1,h2{margin:0}
 @media(max-width:500px){#s-cert .scroll{background-size:100% 425px}}
 
 /* Уточнение экранов по Figma: бейджи, шапки и нижний блок полива. */
-#s-gift .gift-top .pill,#s-gift .traits .glass,.future .traits .glass{
+#s-gift .gift-top .pill,#s-gift .traits .glass{
  background:linear-gradient(90deg,rgba(178,58,94,.32),rgba(178,58,94,.08));
  border-color:rgba(217,100,90,.34);color:#fff
 }
