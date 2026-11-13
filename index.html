@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0f261d">
+<meta name="theme-color" content="#faf5f1">
 <style>body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script>
 /* Safari may serve a cached copy for up to 10 min on GitHub Pages: compare with the server's version and reload if stale */
@@ -791,5 +791,73 @@ button:focus-visible{outline:2px solid var(--gold-2);outline-offset:2px}
 })();
 </script>
 
+<style id="donor-figma-colors">
+/* Палитра дарителя из Figma 1317:14483. Только цветовые свойства. */
+:root{
+ --stage:#22101a;--screen:#faf5f1;--ink:#2a1520;--accent:#b23a5e;
+ --w70:#5e4a53;--w20:#e3d3d0;--w12:#e3d3d0;
+ --gold-1:#b8325a;--gold-2:#c84b5a;--gold-3:#d9645a;
+ --light-1:#fff;--light-2:#fff;
+ --card-b:#e3d3d0;--card-1:#fff;--card-2:#fff;--warm-b:#e3d3d0;
+ --donor-dark:radial-gradient(ellipse at 50% 45.07%,#5a1f3f 0%,#451a31 27.5%,#2f1422 55%,#22101a 100%);
+}
+.app{color:#2a1520}
+.glow{background:radial-gradient(ellipse 424px 390px at 300px 184px,rgba(90,31,63,.2),rgba(90,31,63,0) 62%)}
+.orb{background:radial-gradient(circle,rgba(90,31,63,.32),rgba(90,31,63,0) 62%)}
+.glass{background:linear-gradient(160deg,#fff,#fff);color:#2a1520;border-color:#e3d3d0;box-shadow:inset 0 1px 0 #fff}
+.light{background:var(--donor-dark);color:#fff}
+.head p{color:#5e4a53;opacity:1}
+.segs i{background:#e3d3d0}
+.segs i.on{background:linear-gradient(156deg,#b8325a,#c84b5a 45%,#d9645a)}
+.cta{color:#fff;border-color:rgba(217,100,90,.34);background:linear-gradient(135deg,#b8325a,#c84b5a 45%,#d9645a);box-shadow:0 12px 34px rgba(178,58,94,.24),inset 0 1px 0 rgba(255,255,255,.8)}
+.cta .ic{color:#2a1520;background:#faf5f1}
+.cta::before{background:linear-gradient(105deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.18) 35%,rgba(253,240,243,.75) 50%,rgba(255,255,255,.18) 65%,rgba(255,255,255,0) 100%)}
+.cta .spin{border-color:rgba(42,21,32,.25);border-top-color:#2a1520}
+.back,.round{background:#e8dad6;border-color:#e3d3d0;color:#2a1520}
+.back svg[stroke="#fff"],.back svg [stroke="#fff"],.round svg[stroke="#fff"],.round svg [stroke="#fff"]{stroke:#2a1520}
+.bnav::before{background:linear-gradient(to bottom,rgba(250,245,241,0),#faf5f1 55%)}
+.introTop::after{background:linear-gradient(to bottom,rgba(23,11,20,0) 0%,#22101a 69.4%)}
+.introTop h1,.introTop h1 span{color:#fff}
+.duo>div.light,.together.light{background:linear-gradient(130deg,#fff,#fff);color:#2a1520}
+.duo>div.out{background:url("img/card_out.png") right bottom/cover no-repeat,linear-gradient(121deg,#fff,#fff)}
+.gchip{color:#2a1520;background:#fdf0f3}
+.fi{background:#fdf0f3;border-color:#fdf0f3}
+#gIc stop{stop-color:#b23a5e}
+.feat{border-color:rgba(42,21,32,.12)}
+.feat small{color:#5e4a53}
+.brand .bimg,.bigBrand{border-color:#e3d3d0}
+.brand.light .amt{color:#fff}
+.brand.glass .amt{color:#2a1520}
+.brand .amt span{opacity:1}
+.type.glass span{color:#5e4a53}
+.type.light{border-color:#22101a}
+.type.light span{color:rgba(255,255,255,.82)}
+.chip.light{border-color:#22101a}
+.grpH span,.grpH span.full{color:#b23a5e}
+.amtb.light{color:#fff}
+.note{color:#5e4a53}
+.prod.light{background:var(--donor-dark);color:#fff;border-color:#e3d3d0}
+.tag{background:#fdf0f3;color:#2a1520}
+.prow div span:first-child{color:rgba(255,255,255,.82)}
+.pl span{color:#5e4a53;opacity:1}
+.pl em{color:#b23a5e}
+.pitems{border-color:#e3d3d0}
+.card{background:#fdf0f3;border-color:#e3d3d0}
+.card .photo::after{background:linear-gradient(to bottom,rgba(58,26,44,0),#24101a)}
+.msg{color:#fff}
+.msg p{color:rgba(255,255,255,.82)}
+.status{color:#2a1520}
+.status svg[fill="#fff"],.status svg [fill="#fff"]{fill:#2a1520}
+.status svg[stroke="#fff"],.status svg [stroke="#fff"]{stroke:#2a1520}
+.home{background:#2a1520}
+.phone:has(#s-intro.cur) .status{color:#fff}
+.phone:has(#s-intro.cur) .status svg[fill="#fff"],.phone:has(#s-intro.cur) .status svg [fill="#fff"]{fill:#fff}
+.phone:has(#s-intro.cur) .status svg[stroke="#fff"],.phone:has(#s-intro.cur) .status svg [stroke="#fff"]{stroke:#fff}
+@media(max-width:500px){
+ .cta{box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+ #s-intro .introTop::before{background:linear-gradient(to bottom,#22101a 0%,rgba(34,16,26,.85) 18%,rgba(34,16,26,.55) 40%,rgba(34,16,26,.25) 65%,rgba(34,16,26,0) 100%)}
+ .bnav::before{background:linear-gradient(to bottom,rgba(250,245,241,0) 0%,rgba(250,245,241,.12) 15%,rgba(250,245,241,.3) 28%,rgba(250,245,241,.52) 40%,rgba(250,245,241,.72) 52%,rgba(250,245,241,.87) 63%,rgba(250,245,241,.96) 73%,#faf5f1 82%)}
+}
+</style>
 </body>
 </html>
