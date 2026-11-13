@@ -708,6 +708,50 @@ p,h1,h2{margin:0}
     </div>
   </section>
 
+
+  <div class="claim-scrim" id="claimScrim" hidden></div>
+  <section class="claim-sheet" id="claimSheet" role="dialog" aria-modal="true" aria-labelledby="claimTitle" aria-describedby="claimIntro" hidden tabindex="-1">
+    <button class="roundbtn claim-close" id="claimClose" aria-label="Закрыть"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    <div class="claim-content">
+      <span class="claim-eyebrow">Твой подарок — твой выбор</span>
+      <h2 id="claimTitle">Хочешь забрать подарок сейчас?</h2>
+      <p class="claim-intro" id="claimIntro">Сертификат «Золотое Яблоко» на 15 000 ₽ сразу станет твоим. А с цветком будет так:</p>
+      <ol class="claim-effects">
+        <li><span class="claim-num">1</span><div><h3>Цветок замрёт</h3><p>Останется таким, как сейчас, и больше не изменится.</p></div></li>
+        <li><span class="claim-num">2</span><div><h3>Гены перестанут расти</h3><p>Тесты, полив и гены восхищения станут недоступны.</p></div></li>
+        <li><span class="claim-num">3</span><div><h3>Секретный ген не появится</h3><p>Его получают только за год с живым цветком.</p></div></li>
+        <li><span class="claim-num">4</span><div><h3>Цветок останется у тебя</h3><p>На память от твоего дарителя.</p></div></li>
+      </ol>
+      <p class="claim-error" id="claimError" role="alert" hidden></p>
+      <div class="claim-actions">
+        <button class="cta" id="claimKeep"><span class="lbl">Начать жить с цветком</span><span class="ic" aria-hidden="true">↗</span></button>
+        <button class="claim-secondary" id="claimConfirm">Забрать подарок сейчас</button>
+      </div>
+    </div>
+  </section>
+  <section class="scr" id="s-redeem" aria-label="Твой сертификат">
+    <div class="scroll redeem-scroll">
+      <div class="design-dark-header redeem-header">
+        <div class="redeem-nav"><button class="roundbtn" id="redeemBack" aria-label="К цветку">‹</button><span>Твой подарок</span><span class="redeem-check" aria-hidden="true">✓</span></div>
+        <span class="claim-eyebrow">Сертификат получен</span>
+        <h1 class="h1">Он уже твой</h1>
+        <p class="sub">Сохрани код и используй подарок, когда захочешь.</p>
+        <img class="redeem-brand" src="media/brand_big_ga.jpg?v=1792574895" alt="Золотое Яблоко">
+        <div class="redeem-value">15 000 ₽</div>
+      </div>
+      <div class="redeem-card">
+        <p class="claim-eyebrow">Код сертификата</p>
+        <p class="redeem-code" id="redeemCode"></p>
+        <img class="redeem-barcode" id="redeemBarcode" alt="Штрихкод сертификата" hidden>
+        <p class="redeem-pin" id="redeemPin" hidden></p>
+        <button class="claim-secondary" id="copyCertificate">Скопировать код</button>
+        <p class="redeem-instructions" id="redeemInstructions">Используй код при оплате в магазине или на сайте партнёра. Условия применения указаны в сертификате.</p>
+      </div>
+      <p class="redeem-memory">Цветок останется у тебя на память. Его гены и внешний вид сохранены.</p>
+      <div class="redeem-footer"><button class="cta" id="redeemFlower"><span class="lbl">Вернуться к цветку</span><span class="ic" aria-hidden="true">↗</span></button></div>
+    </div>
+  </section>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="home"></div>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3d1"/><stop offset=".45" stop-color="#f4cf7c"/><stop offset="1" stop-color="#e0a24f"/></linearGradient></defs></svg>
@@ -819,7 +863,7 @@ p,h1,h2{margin:0}
 
   /* ---------- 2 · certificate ---------- */
   $('toApp').addEventListener('click',()=>go('s-app'));
-  $('takeNow').addEventListener('click',()=>toast('Сертификат отправлен на почту'));
+  $('takeNow').addEventListener('click',openClaim);
 
   /* ---------- 3 · tabs ---------- */
   let curTab='t-home';
@@ -845,7 +889,7 @@ p,h1,h2{margin:0}
   addEventListener('resize',()=>placeInd(true));
   function enterTab(id){
     const t=$(id);
-    const vh=$('vHome');if(id==='t-home'){const p=vh.play();if(p)p.catch(()=>{});setTimeout(startHero,0)}else vh.pause();
+    const vh=$('vHome');if(id==='t-home'&&!giftClaimed){const p=vh.play();if(p)p.catch(()=>{});setTimeout(startHero,0)}else vh.pause();
     if(id==='t-home'){
       const h=t.querySelector('.hero');h.classList.add('pre');void h.offsetWidth;requestAnimationFrame(()=>h.classList.remove('pre'));
       stagger(t,'.hero-top>*, .water');
@@ -858,7 +902,7 @@ p,h1,h2{margin:0}
     if(id==='t-quiz')stagger(t,'.qhead, .deck, .answer>*, .qact');
   }
   document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.t)));
-  $('ticketBtn').addEventListener('click',()=>toast('Сертификат «Золотое Яблоко» · 15 000 ₽'));
+  $('ticketBtn').addEventListener('click',()=>giftClaimed?openOwnedCertificate():go('s-cert'));
 
   /* genes: rings on home + list on DNA */
   const GENES=[
@@ -943,7 +987,7 @@ p,h1,h2{margin:0}
   /* countdown to the next watering, hh:mm:ss; watering restarts it at 06:00:00 */
   let cd=5*3600+50*60+56;const pad=n=>String(n).padStart(2,'0');
   function drawCd(){$('countdown').textContent=pad(Math.floor(cd/3600))+':'+pad(Math.floor(cd%3600/60))+':'+pad(cd%60);}
-  setInterval(()=>{cd=cd>0?cd-1:6*3600;drawCd();},1000);drawCd();
+  setInterval(()=>{if(giftClaimed)return;cd=cd>0?cd-1:6*3600;drawCd();},1000);drawCd();
   /* DNA: tap a gene card to make it the watering goal */
   $('dnaList').addEventListener('click',e=>{const c=e.target.closest('[data-g]');if(!c)return;pickGoal(+c.dataset.g);});
   $('dnaList').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-g]')){e.preventDefault();pickGoal(+e.target.dataset.g);}});
@@ -1089,6 +1133,118 @@ p,h1,h2{margin:0}
   function scale(){appH();requestAnimationFrame(fitFrame);requestAnimationFrame(fitSeed);if(mobile.matches){fit.style.transform='';return;}
     const s=Math.min((innerWidth-48)/393,(innerHeight-100)/852,1);fit.style.transform='scale('+s+')';}
   addEventListener('resize',scale);if(window.visualViewport)visualViewport.addEventListener('resize',scale);scale();
+
+  /* Получение сертификата. Provider выдаёт данные купленного сертификата с сервера;
+     действующие коды не хранятся в HTML публичного сайта. */
+  let giftClaimed=false,claimBusy=false,claimReturnFocus=null,activeCertificate=null;
+  const claimScope=new URLSearchParams(location.search).get('gift')||'recipient-preview';
+  const claimStateKey='recipient:claimed:v1:'+claimScope;
+  let savedClaim=null;
+  try{savedClaim=JSON.parse(sessionStorage.getItem(claimStateKey)||'null')}catch(_){}
+  function claimProvider(action){
+    const provider=window.recipientCertificateProvider;
+    if(typeof provider!=='function')return Promise.reject(new Error('CERTIFICATE_UNAVAILABLE'));
+    return Promise.resolve(provider({action,giftId:claimScope,certificateId:savedClaim&&savedClaim.certificateId}));
+  }
+  function closeClaim(){
+    if(claimBusy)return;
+    $('claimSheet').hidden=true;$('claimScrim').hidden=true;
+    [...phone.children].forEach(el=>{if(el.dataset.claimInert==='1'){el.inert=false;delete el.dataset.claimInert}});
+    if(claimReturnFocus&&claimReturnFocus.isConnected)claimReturnFocus.focus({preventScroll:true});
+  }
+  function openClaim(){
+    if(giftClaimed){openOwnedCertificate();return;}
+    claimReturnFocus=document.activeElement;$('claimError').hidden=true;
+    $('claimSheet').hidden=false;$('claimScrim').hidden=false;
+    [...phone.children].forEach(el=>{if(el!==$('claimSheet')&&el!==$('claimScrim')&&!el.inert){el.inert=true;el.dataset.claimInert='1'}});
+    $('claimClose').focus({preventScroll:true});
+  }
+  function displayOwnedCertificate(certificate){
+    activeCertificate=certificate;
+    $('redeemCode').textContent=certificate.code||'Сертификат по штрихкоду';
+    $('copyCertificate').hidden=!certificate.code;
+    $('redeemPin').hidden=!certificate.pin;
+    $('redeemPin').textContent=certificate.pin?'ПИН-код: '+certificate.pin:'';
+    const barcode=$('redeemBarcode');barcode.hidden=true;barcode.removeAttribute('src');
+    if(certificate.barcodeImageUrl){
+      try{const url=new URL(certificate.barcodeImageUrl,location.href);
+        if(url.protocol==='https:'||(url.protocol==='http:'&&url.origin===location.origin)){barcode.src=url.href;barcode.hidden=false}
+      }catch(_){}
+    }
+    if(certificate.instructions)$('redeemInstructions').textContent=certificate.instructions;
+    go('s-redeem');$('s-redeem').querySelector('.scroll').scrollTop=0;
+    $('redeemBack').focus({preventScroll:true});
+  }
+  function freezeGift(){
+    giftClaimed=true;phone.classList.add('gift-claimed');
+    $('waterBtn').disabled=true;$('waterBtn').setAttribute('aria-label','Цветок сохранён. Полив недоступен');
+    $('waterBtn').querySelector('.disc').lastChild.textContent='Сохранён';
+    if($('startTest')){$('startTest').disabled=true;$('startTest').setAttribute('aria-disabled','true');
+      $('startTest').querySelector('span').textContent='Цветок сохранён';}
+    $('t-home').querySelector('.water .xs').textContent='На память от дарителя';
+    $('t-tests').querySelector('.page-head .sub').textContent='Ты забрал подарок. Цветок и его гены сохранены на память — новые тесты больше недоступны.';
+    $('t-dna').querySelector('.page-head .sub').textContent='Ты забрал подарок. Гены твоего цветка сохранены и больше не изменяются.';
+    $('vHome').pause();$('vWater').pause();
+    document.querySelectorAll('#dnaList [data-g]').forEach(el=>{el.setAttribute('aria-disabled','true');el.tabIndex=-1});
+  }
+  async function openOwnedCertificate(){
+    if(activeCertificate){displayOwnedCertificate(activeCertificate);return;}
+    try{const c=await claimProvider('read');if(!c||(!c.code&&!c.barcodeImageUrl))throw Error('CERTIFICATE_UNAVAILABLE');displayOwnedCertificate(c)}
+    catch(_){toast('Сертификат сейчас недоступен. Попробуй позже.')}
+  }
+  async function confirmClaim(){
+    if(claimBusy)return;claimBusy=true;
+    $('claimError').hidden=true;$('claimConfirm').disabled=true;$('claimClose').disabled=true;$('claimKeep').disabled=true;
+    $('claimConfirm').textContent='Открываем сертификат…';
+    try{
+      const certificate=await claimProvider('claim');
+      if(!certificate||(!certificate.code&&!certificate.barcodeImageUrl))throw Error('CERTIFICATE_UNAVAILABLE');
+      const snapshot={certificateId:certificate.id||null,genes:GENES.map(g=>g.p),goal,newGene:NEWGENE,countdown:cd};
+      try{sessionStorage.setItem(claimStateKey,JSON.stringify(snapshot))}catch(_){}
+      savedClaim=snapshot;claimBusy=false;closeClaim();freezeGift();displayOwnedCertificate(certificate);
+    }catch(_){
+      $('claimError').textContent='Сертификат сейчас недоступен. Попробуй позже — твой цветок остаётся живым.';
+      $('claimError').hidden=false;
+    }finally{
+      claimBusy=false;$('claimConfirm').disabled=false;$('claimClose').disabled=false;$('claimKeep').disabled=false;
+      $('claimConfirm').textContent='Забрать подарок сейчас';
+    }
+  }
+  $('claimClose').addEventListener('click',closeClaim);
+  $('claimScrim').addEventListener('click',closeClaim);
+  $('claimKeep').addEventListener('click',()=>{closeClaim();go('s-app');showTab('t-home')});
+  $('claimConfirm').addEventListener('click',confirmClaim);
+  $('redeemBack').addEventListener('click',()=>{go('s-app');showTab('t-home');$('vHome').pause()});
+  $('redeemFlower').addEventListener('click',()=>{go('s-app');showTab('t-home');$('vHome').pause()});
+  $('copyCertificate').addEventListener('click',async()=>{
+    if(!activeCertificate||!activeCertificate.code)return;
+    try{await navigator.clipboard.writeText(activeCertificate.code);toast('Код скопирован')}
+    catch(_){const range=document.createRange();range.selectNodeContents($('redeemCode'));const selection=getSelection();selection.removeAllRanges();selection.addRange(range);toast('Код выделен — скопируй его')}
+  });
+  $('redeemBarcode').addEventListener('error',()=>{$('redeemBarcode').hidden=true});
+  $('claimSheet').addEventListener('keydown',e=>{
+    if(e.key==='Escape'){e.preventDefault();closeClaim();return}
+    if(e.key!=='Tab')return;
+    const targets=[...$('claimSheet').querySelectorAll('button:not(:disabled)')];
+    if(!targets.length){e.preventDefault();return}
+    const first=targets[0],last=targets[targets.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  });
+  function guardFrozen(e){if(giftClaimed){e.preventDefault();e.stopImmediatePropagation()}}
+  $('waterBtn').addEventListener('click',guardFrozen,true);
+  $('startTest').addEventListener('click',guardFrozen,true);
+  $('dnaList').addEventListener('click',guardFrozen,true);
+  $('dnaList').addEventListener('keydown',guardFrozen,true);
+  if($('geneRow'))$('geneRow').addEventListener('click',guardFrozen,true);
+  addEventListener('keydown',e=>{if(giftClaimed&&curTab==='t-quiz')guardFrozen(e)},true);
+  if(savedClaim&&Array.isArray(savedClaim.genes)){
+    GENES.forEach((g,i)=>{if(Number.isFinite(savedClaim.genes[i]))g.p=Math.max(0,Math.min(100,savedClaim.genes[i]))});
+    goal=Number.isInteger(savedClaim.goal)&&GENES[savedClaim.goal]?savedClaim.goal:0;
+    NEWGENE=!!savedClaim.newGene;if(Number.isFinite(savedClaim.countdown))cd=savedClaim.countdown;
+    renderGenes();drawCd();freezeGift();
+  }
+
 })();
 </script>
 
@@ -1288,6 +1444,50 @@ p,h1,h2{margin:0}
  .design-dark-header{margin-top:0;padding-top:0}
  #t-home .hero{height:calc(var(--appH,852px) - 192px)}
 }
+
+/* Получение купленного сертификата */
+[hidden]{display:none!important}
+.claim-scrim{position:absolute;inset:0;z-index:80;background:rgba(40,18,30,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.claim-sheet{position:absolute;inset:auto 0 0;z-index:81;max-height:calc(100% - 24px);overflow:auto;overscroll-behavior:contain;border-radius:28px 28px 0 0;background:#faf5f1;color:#2a1520;padding:16px 20px 32px;box-shadow:0 -8px 40px rgba(40,18,30,.15);animation:claimIn .3s var(--ease)}
+@keyframes claimIn{from{transform:translateY(32px);opacity:0}to{transform:none;opacity:1}}
+.claim-close{margin-left:auto;width:36px;height:36px}
+.claim-content{padding-top:12px}
+.claim-eyebrow{font-size:11px;line-height:16px;letter-spacing:.04em;color:#b23a5e;display:block}
+.claim-sheet h2{margin:8px 0 12px;font-weight:500;font-size:26px;line-height:30px;letter-spacing:-.4px}
+.claim-intro{font-size:14px;line-height:20px;color:#5e4a53}
+.claim-effects{list-style:none;margin:24px 0;padding:0;display:flex;flex-direction:column;gap:18px}
+.claim-effects li{display:flex;gap:12px;align-items:flex-start}
+.claim-num{width:30px;height:30px;border-radius:100px;flex:none;display:flex;align-items:center;justify-content:center;background:#e8dad6;font-size:12px;color:#5e4a53}
+.claim-effects h3{margin:0 0 4px;font-size:15px;line-height:20px;font-weight:600}
+.claim-effects p{font-size:13px;line-height:18px;color:#5e4a53}
+.claim-actions{display:flex;flex-direction:column;gap:10px}
+.claim-actions .cta{flex:none}
+.claim-secondary{width:100%;min-height:48px;padding:12px 16px;border:1px solid #b23a5e;border-radius:100px;color:#b23a5e;background:transparent;font-size:14px;font-weight:500}
+.claim-secondary:disabled{opacity:.5;cursor:wait}
+.claim-error{padding:12px;margin:0 0 16px;border-radius:12px;background:#fdf0f3;color:#b23a5e;font-size:13px;line-height:18px}
+#s-redeem{color:#2a1520}
+.redeem-scroll{padding-bottom:32px}
+.redeem-header{padding:16px 20px 24px}
+.redeem-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;font-size:14px}
+.redeem-check{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.14);border-radius:100px}
+.redeem-header .claim-eyebrow{color:rgba(255,255,255,.82)}
+.redeem-header .h1{margin-top:8px}
+.redeem-header .sub{margin-top:8px;color:rgba(255,255,255,.82);line-height:20px}
+.redeem-brand{display:block;width:100%;height:160px;object-fit:cover;border-radius:20px 20px 0 0;margin-top:24px}
+.redeem-value{background:#fdf0f3;color:#b23a5e;padding:14px 16px;border-radius:0 0 20px 20px;font-size:28px}
+.redeem-card{margin:20px 16px;padding:20px;background:#fff;border:1px solid #e3d3d0;border-radius:24px}
+.redeem-code{margin:12px 0 20px;font-size:24px;line-height:32px;letter-spacing:.06em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;user-select:all}
+.redeem-barcode{display:block;max-width:100%;max-height:120px;object-fit:contain;margin:0 auto 20px}
+.redeem-pin{font-size:14px;margin-bottom:16px;user-select:all}
+.redeem-instructions{margin-top:16px;font-size:13px;line-height:19px;color:#5e4a53}
+.redeem-memory{margin:0 24px;font-size:13px;line-height:19px;color:#5e4a53}
+.redeem-footer{padding:24px 16px}
+#phone.gift-claimed #waterBtn{opacity:.55;cursor:default}
+#phone.gift-claimed #t-home .water .xs{background:#e8dad6}
+#phone.gift-claimed #t-tests .tests{opacity:.6}
+#phone.gift-claimed #dnaList [data-g]{cursor:default}
+@media(min-width:501px){.redeem-header{padding-top:70px}}
+@media(max-width:500px){.claim-sheet{padding-bottom:calc(24px + var(--bot,0px))}.redeem-footer{padding-bottom:calc(16px + var(--bot,0px))}}
 </style>
 </body>
 </html>
