@@ -1159,7 +1159,10 @@ p,h1,h2{margin:0}
   const claimScope=new URLSearchParams(location.search).get('gift')||'recipient-preview';
   const claimStateKey='recipient:claimed:v1:'+claimScope;
   let savedClaim=null;
-  try{savedClaim=JSON.parse(localStorage.getItem(claimStateKey)||sessionStorage.getItem(claimStateKey)||'null');if(savedClaim)localStorage.setItem(claimStateKey,JSON.stringify(savedClaim))}catch(_){}
+  // Получение сертификата действует только до перезагрузки страницы.
+  // Удаляем и старые снимки, чтобы прежняя блокировка не возвращалась.
+  try{localStorage.removeItem(claimStateKey)}catch(_){}
+  try{sessionStorage.removeItem(claimStateKey)}catch(_){}
   function claimProvider(action){
     const provider=window.recipientCertificateProvider;
     // Выдуманные данные сертификата для продуктового прототипа.
@@ -1232,7 +1235,6 @@ p,h1,h2{margin:0}
       const certificate=await claimProvider('claim');
       if(!certificate||(!certificate.code&&!certificate.barcodeImageUrl))throw Error('CERTIFICATE_UNAVAILABLE');
       const snapshot={certificateId:certificate.id||null,genes:GENES.map(g=>g.p),goal,newGene:NEWGENE,countdown:cd};
-      try{localStorage.setItem(claimStateKey,JSON.stringify(snapshot))}catch(_){}
       savedClaim=snapshot;claimBusy=false;closeClaim();freezeGift();displayOwnedCertificate(certificate);
     }catch(_){
       $('claimError').textContent='Сертификат сейчас недоступен. Попробуй позже — твой цветок остаётся живым.';
@@ -1296,12 +1298,7 @@ p,h1,h2{margin:0}
   $('dnaList').addEventListener('keydown',guardFrozen,true);
   if($('geneRow'))$('geneRow').addEventListener('click',guardFrozen,true);
   addEventListener('keydown',e=>{if(giftClaimed&&curTab==='t-quiz')guardFrozen(e)},true);
-  if(savedClaim&&Array.isArray(savedClaim.genes)){
-    GENES.forEach((g,i)=>{if(Number.isFinite(savedClaim.genes[i]))g.p=Math.max(0,Math.min(100,savedClaim.genes[i]))});
-    goal=Number.isInteger(savedClaim.goal)&&GENES[savedClaim.goal]?savedClaim.goal:0;
-    NEWGENE=!!savedClaim.newGene;if(Number.isFinite(savedClaim.countdown))cd=savedClaim.countdown;
-    renderGenes();drawCd();freezeGift();
-  }
+
 
 
   function syncTopSurface(){
