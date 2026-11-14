@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='1792574895';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261114-layout1';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -771,7 +771,7 @@ p,h1,h2{margin:0}
     const a=$(cur),b=$(id);
     b.classList.add('cur');a.classList.remove('cur');a.classList.add('left');
     setTimeout(()=>a.classList.remove('left'),520);
-    cur=id;
+    cur=id;syncTopSurface();
     if(id==='s-cert')enterCert();
     if(id==='s-app'){placeInd(true);enterTab('t-home');}
   }
@@ -873,7 +873,7 @@ p,h1,h2{margin:0}
     const a=$(curTab),b=$(id),dir=ORDER.indexOf(id)>ORDER.indexOf(curTab)?1:-1;
     b.classList.add('snap');b.style.setProperty('--off',(dir*28)+'px');void b.offsetWidth;b.classList.remove('snap');
     a.style.setProperty('--off',(-dir*28)+'px');
-    a.classList.remove('on');b.classList.add('on');curTab=id;
+    a.classList.remove('on');b.classList.add('on');curTab=id;syncTopSurface();
     const tabId=id==='t-quiz'?'t-tests':id;
     document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.t===tabId));
     placeInd();
@@ -1245,6 +1245,15 @@ p,h1,h2{margin:0}
     renderGenes();drawCd();freezeGift();
   }
 
+
+  function syncTopSurface(){
+    const dark=cur!=='s-app'||curTab!=='t-quiz';
+    phone.classList.toggle('dark-top',dark);
+    const color=dark?'#22101a':'#faf5f1';
+    document.documentElement.style.setProperty('--recipient-top-color',color);
+    const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=color;
+  }
+  syncTopSurface();
 })();
 </script>
 
@@ -1488,6 +1497,23 @@ p,h1,h2{margin:0}
 #phone.gift-claimed #dnaList [data-g]{cursor:default}
 @media(min-width:501px){.redeem-header{padding-top:70px}}
 @media(max-width:500px){.claim-sheet{padding-bottom:calc(24px + var(--bot,0px))}.redeem-footer{padding-bottom:calc(16px + var(--bot,0px))}}
+
+/* Сплошная верхняя подложка и фиксированная кнопка «Поделиться». */
+:root{--recipient-nav-height:120px}
+#shareAct{
+ position:absolute;left:16px;right:16px;
+ bottom:calc(var(--recipient-nav-height) + 4px)!important
+}
+#t-share .scroll{
+ bottom:calc(var(--recipient-nav-height) + 76px);
+ padding-bottom:20px!important
+}
+#shareBtn .ic svg[fill="#fff"]{fill:#2a1520}
+@media(max-width:500px){
+ :root{--recipient-nav-height:calc(92px + var(--bot))}
+ body{background:var(--recipient-top-color,#22101a)}
+ .design-dark-header{margin-top:calc(-1 * var(--top));padding-top:var(--top)}
+}
 </style>
 </body>
 </html>
