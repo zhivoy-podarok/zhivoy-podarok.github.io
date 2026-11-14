@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261114-navigation2';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261114-certificate3';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -739,6 +739,7 @@ p,h1,h2{margin:0}
         <img class="redeem-brand" src="media/brand_big_ga.jpg?v=1792574895" alt="Золотое Яблоко">
         <div class="redeem-value">15 000 ₽</div>
       </div>
+      <aside class="redeem-warning" id="redeemWarning"><strong>Важно</strong><p>Если вы решите обналичить сертификат, цветок замрёт, и вы не сможете за ним ухаживать.</p></aside>
       <div class="redeem-card">
         <p class="claim-eyebrow">Код сертификата</p>
         <p class="redeem-code" id="redeemCode"></p>
@@ -914,7 +915,7 @@ p,h1,h2{margin:0}
     if(id==='t-quiz')stagger(t,'.qhead, .deck, .answer>*, .qact');
   }
   document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.t)));
-  $('ticketBtn').addEventListener('click',()=>giftClaimed?openOwnedCertificate():go('s-cert',true));
+  $('ticketBtn').addEventListener('click',openOwnedCertificate);
 
   /* genes: rings on home + list on DNA */
   const GENES=[
@@ -1155,7 +1156,15 @@ p,h1,h2{margin:0}
   try{savedClaim=JSON.parse(sessionStorage.getItem(claimStateKey)||'null')}catch(_){}
   function claimProvider(action){
     const provider=window.recipientCertificateProvider;
-    if(typeof provider!=='function')return Promise.reject(new Error('CERTIFICATE_UNAVAILABLE'));
+    // Выдуманные данные сертификата для продуктового прототипа.
+    if(typeof provider!=='function')return Promise.resolve({
+      id:'prototype-ga-15000',
+      code:'9400150008264713',
+      displayCode:'9400 1500 0826 4713',
+      pin:'4821',
+      barcodeImageUrl:'media/certificate-barcode.svg',
+      instructions:'Покажи штрихкод на кассе или введи код сертификата при оплате на сайте «Золотого Яблока».'
+    });
     return Promise.resolve(provider({action,giftId:claimScope,certificateId:savedClaim&&savedClaim.certificateId}));
   }
   function closeClaim(){
@@ -1173,7 +1182,12 @@ p,h1,h2{margin:0}
   }
   function displayOwnedCertificate(certificate){
     activeCertificate=certificate;
-    $('redeemCode').textContent=certificate.code||'Сертификат по штрихкоду';
+    $('redeemCode').textContent=certificate.displayCode||certificate.code||'Сертификат по штрихкоду';
+    $('s-redeem').querySelector('.redeem-header .claim-eyebrow').textContent=giftClaimed?'Сертификат получен':'Подарок от дарителя';
+    $('s-redeem').querySelector('.redeem-header .h1').textContent='Твой сертификат';
+    $('s-redeem').querySelector('.redeem-header .sub').textContent='Покажи штрихкод на кассе или скопируй код для оплаты на сайте.';
+    $('s-redeem').querySelector('.redeem-memory').hidden=!giftClaimed;
+    $('redeemWarning').hidden=giftClaimed;
     $('copyCertificate').hidden=!certificate.code;
     $('redeemPin').hidden=!certificate.pin;
     $('redeemPin').textContent=certificate.pin?'ПИН-код: '+certificate.pin:'';
@@ -1226,8 +1240,8 @@ p,h1,h2{margin:0}
   $('claimScrim').addEventListener('click',closeClaim);
   $('claimKeep').addEventListener('click',()=>{closeClaim();go('s-app');showTab('t-home')});
   $('claimConfirm').addEventListener('click',confirmClaim);
-  $('redeemBack').addEventListener('click',()=>{go('s-app');showTab('t-home');$('vHome').pause()});
-  $('redeemFlower').addEventListener('click',()=>{go('s-app');showTab('t-home');$('vHome').pause()});
+  $('redeemBack').addEventListener('click',()=>{go('s-app');showTab('t-home');if(giftClaimed)$('vHome').pause()});
+  $('redeemFlower').addEventListener('click',()=>{go('s-app');showTab('t-home');if(giftClaimed)$('vHome').pause()});
   $('copyCertificate').addEventListener('click',async()=>{
     if(!activeCertificate||!activeCertificate.code)return;
     try{await navigator.clipboard.writeText(activeCertificate.code);toast('Код скопирован')}
@@ -1527,6 +1541,11 @@ p,h1,h2{margin:0}
  .design-dark-header{margin-top:calc(-1 * var(--top));padding-top:var(--top)}
 }
 .scr.instant{transition:none!important}
+
+.redeem-warning{margin:20px 16px 0;padding:16px;background:#fdf0f3;border:1px solid rgba(231,165,184,.7);border-radius:20px;color:#2a1520}
+.redeem-warning strong{font-size:14px;font-weight:600}
+.redeem-warning p{margin-top:6px;font-size:14px;line-height:20px;color:#5e4a53}
+@media(max-width:500px){.redeem-header{padding-top:calc(var(--top) + 16px)}}
 </style>
 </body>
 </html>
