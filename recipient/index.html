@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261114-certificate-ux4';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261114-certificate-simple5';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -732,21 +732,15 @@ p,h1,h2{margin:0}
   <section class="scr" id="s-redeem" aria-label="Сертификат">
     <div class="scroll redeem-scroll">
       <header class="design-dark-header redeem-header">
-        <div class="redeem-nav"><button class="roundbtn" id="redeemBack" aria-label="Вернуться к цветку">‹</button><span>Сертификат</span><span class="redeem-state" id="redeemState">Готов к получению</span></div>
+        <div class="redeem-nav"><button class="roundbtn" id="redeemBack" aria-label="Вернуться к цветку"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 8.5 12l6 6"/></svg></button><span>Сертификат</span><span class="redeem-state" id="redeemState">Готов к получению</span></div>
         <div class="redeem-summary">
           <img class="redeem-brand" src="media/brand_big_ga.jpg?v=1792574895" alt="">
           <div><h1>Золотое Яблоко</h1><p class="redeem-value">15 000 ₽</p></div>
         </div>
       </header>
-      <aside class="redeem-warning" id="redeemWarning"><strong>Перед использованием</strong><p>Чтобы использовать сертификат, подтверди его получение. После этого цветок замрёт: полив и тесты станут недоступны.</p></aside>
+      <aside class="redeem-warning" id="redeemWarning"><p>Когда используешь сертификат, цветок замрёт: полив и тесты станут недоступны.</p></aside>
       <div class="redeem-card">
-        <div class="redeem-locked" id="redeemLocked">
-          <div class="barcode-placeholder" aria-hidden="true"><span><svg width="20" height="23" viewBox="0 0 20 23" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="9" width="14" height="12" rx="3"/><path d="M6 9V6a4 4 0 0 1 8 0v3"/><path d="M10 14v3" stroke-linecap="round"/></svg></span></div>
-          <h2>Код и штрихкод скрыты</h2>
-          <p>Открой их, когда решишь воспользоваться подарком. Пока цветок продолжает жить.</p>
-        </div>
-        <button class="cta" id="openForPayment"><span class="lbl">Открыть для оплаты</span><span class="ic" aria-hidden="true">↗</span></button>
-        <div id="redeemData" hidden>
+        <div id="redeemData">
           <button class="barcode-preview" id="enlargeBarcode" aria-label="Увеличить штрихкод"><img class="redeem-barcode" id="redeemBarcode" alt="Штрихкод сертификата" hidden><span>Нажми на штрихкод, чтобы увеличить</span></button>
           <p class="barcode-error" id="barcodeError" role="status" hidden>Штрихкод не загрузился. Используй код сертификата.</p>
           <p class="redeem-label">Код сертификата</p>
@@ -761,7 +755,7 @@ p,h1,h2{margin:0}
     </div>
   </section>
   <section class="barcode-modal" id="barcodeModal" role="dialog" aria-modal="true" aria-labelledby="barcodeTitle" hidden>
-    <button class="roundbtn" id="closeBarcode" aria-label="Закрыть штрихкод">×</button>
+    <button class="roundbtn" id="closeBarcode" aria-label="Закрыть штрихкод"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     <div class="barcode-full-content"><h2 id="barcodeTitle">Золотое Яблоко</h2><p class="barcode-full-amount">15 000 ₽</p><img id="barcodeFullImage" alt="Штрихкод сертификата для сканирования"><p id="barcodeFullCode"></p><p id="barcodeFullPin"></p><span>Покажи штрихкод кассиру</span></div>
   </section>
 
@@ -1162,7 +1156,7 @@ p,h1,h2{margin:0}
   /* Получение сертификата. Provider выдаёт данные купленного сертификата с сервера;
      действующие коды не хранятся в HTML публичного сайта. */
   let giftClaimed=false,claimBusy=false,claimReturnFocus=null,activeCertificate=null;
-  let pendingCertificateAction='reveal',barcodeReturnFocus=null;
+  let barcodeReturnFocus=null;
   const claimScope=new URLSearchParams(location.search).get('gift')||'recipient-preview';
   const claimStateKey='recipient:claimed:v1:'+claimScope;
   let savedClaim=null;
@@ -1185,11 +1179,9 @@ p,h1,h2{margin:0}
     $('claimSheet').hidden=true;$('claimScrim').hidden=true;
     [...phone.children].forEach(el=>{if(el.dataset.claimInert==='1'){el.inert=false;delete el.dataset.claimInert}});
     if(claimReturnFocus&&claimReturnFocus.isConnected)claimReturnFocus.focus({preventScroll:true});
-    pendingCertificateAction='reveal';
   }
-  function openClaim(action='reveal'){
-    pendingCertificateAction=typeof action==='string'?action:'reveal';
-    if(giftClaimed){runCertificateAction(pendingCertificateAction);return;}
+  function openClaim(){
+    if(giftClaimed){openOwnedCertificate();return;}
     claimReturnFocus=document.activeElement;$('claimError').hidden=true;
     $('claimKeep').querySelector('.lbl').textContent='Оставить цветок живым';
     $('claimSheet').hidden=false;$('claimScrim').hidden=false;
@@ -1198,19 +1190,17 @@ p,h1,h2{margin:0}
   }
   function displayOwnedCertificate(certificate){
     activeCertificate=certificate;
-    $('redeemState').textContent=giftClaimed?'Получен':'Готов к получению';
+    $('redeemState').textContent=giftClaimed?'Получен':'Сертификат';
     $('redeemWarning').hidden=giftClaimed;
-    $('redeemLocked').hidden=giftClaimed;
-    $('openForPayment').hidden=giftClaimed;
-    $('redeemData').hidden=!giftClaimed;
+    $('redeemData').hidden=false;
     $('s-redeem').querySelector('.redeem-memory').hidden=!giftClaimed;
-    $('redeemCode').textContent=giftClaimed?(certificate.displayCode||certificate.code||''):'';
-    $('copyCertificate').hidden=!giftClaimed||!certificate.code;
-    $('redeemPinRow').hidden=!giftClaimed||!certificate.pin;
-    $('redeemPin').textContent=giftClaimed&&certificate.pin?certificate.pin:'';
+    $('redeemCode').textContent=certificate.displayCode||certificate.code||'';
+    $('copyCertificate').hidden=!certificate.code;
+    $('redeemPinRow').hidden=!certificate.pin;
+    $('redeemPin').textContent=certificate.pin||'';
     const barcode=$('redeemBarcode');barcode.hidden=true;barcode.removeAttribute('src');
     $('enlargeBarcode').hidden=true;$('barcodeError').hidden=true;
-    if(giftClaimed&&certificate.barcodeImageUrl){
+    if(certificate.barcodeImageUrl){
       try{const url=new URL(certificate.barcodeImageUrl,location.href);
         if(url.protocol==='https:'||(url.protocol==='http:'&&url.origin===location.origin)){
           barcode.src=url.href;barcode.hidden=false;$('enlargeBarcode').hidden=false;
@@ -1219,7 +1209,7 @@ p,h1,h2{margin:0}
     }
     $('redeemInstructions').textContent=certificate.instructions||'Покажи штрихкод на кассе или введи код и ПИН при оплате на сайте магазина.';
     go('s-redeem',true);$('s-redeem').querySelector('.scroll').scrollTop=0;
-    (giftClaimed?$('copyCertificate'):$('openForPayment')).focus({preventScroll:true});
+    $('redeemBack').focus({preventScroll:true});
   }
   function freezeGift(){
     giftClaimed=true;phone.classList.add('gift-claimed');
@@ -1247,9 +1237,7 @@ p,h1,h2{margin:0}
       if(!certificate||(!certificate.code&&!certificate.barcodeImageUrl))throw Error('CERTIFICATE_UNAVAILABLE');
       const snapshot={certificateId:certificate.id||null,genes:GENES.map(g=>g.p),goal,newGene:NEWGENE,countdown:cd};
       try{localStorage.setItem(claimStateKey,JSON.stringify(snapshot))}catch(_){}
-      const nextAction=pendingCertificateAction;
       savedClaim=snapshot;claimBusy=false;closeClaim();freezeGift();displayOwnedCertificate(certificate);
-      if(nextAction!=='reveal')await runCertificateAction(nextAction);
     }catch(_){
       $('claimError').textContent='Сертификат сейчас недоступен. Попробуй позже — твой цветок остаётся живым.';
       $('claimError').hidden=false;
@@ -1265,8 +1253,6 @@ p,h1,h2{margin:0}
   $('redeemBack').addEventListener('click',()=>{go('s-app');showTab('t-home');if(giftClaimed)$('vHome').pause()});
   $('redeemFlower').addEventListener('click',()=>{go('s-app');showTab('t-home');if(giftClaimed)$('vHome').pause()});
   async function runCertificateAction(action){
-    if(!giftClaimed){openClaim(action);return;}
-    if(action==='reveal'){openOwnedCertificate();return;}
     if(action==='barcode'){openBarcode();return;}
     const pin=action==='copy-pin',value=activeCertificate&&(pin?activeCertificate.pin:activeCertificate.code);
     if(!value)return;
@@ -1275,7 +1261,7 @@ p,h1,h2{margin:0}
   }
   function openBarcode(){
     const source=$('redeemBarcode');
-    if(!giftClaimed||!source.getAttribute('src'))return;
+    if(!source.getAttribute('src'))return;
     barcodeReturnFocus=document.activeElement;
     $('barcodeFullImage').src=source.src;
     $('barcodeFullCode').textContent=activeCertificate.displayCode||activeCertificate.code||'';
@@ -1291,7 +1277,6 @@ p,h1,h2{margin:0}
     [...phone.children].forEach(el=>{if(el.dataset.barcodeInert==='1'){el.inert=false;delete el.dataset.barcodeInert}});
     if(barcodeReturnFocus&&barcodeReturnFocus.isConnected)barcodeReturnFocus.focus({preventScroll:true});
   }
-  $('openForPayment').addEventListener('click',()=>openClaim('reveal'));
   $('copyCertificate').addEventListener('click',()=>runCertificateAction('copy-code'));
   $('copyPin').addEventListener('click',()=>runCertificateAction('copy-pin'));
   $('enlargeBarcode').addEventListener('click',()=>runCertificateAction('barcode'));
@@ -1648,6 +1633,30 @@ p,h1,h2{margin:0}
  #s-redeem .redeem-header{padding-top:calc(var(--top) + 12px)}
  .barcode-modal{padding-top:calc(var(--top) + 12px);padding-bottom:calc(var(--bot) + 20px)}
 }
+
+/* Типографика сертификата и подтверждения — только стили из Figma:
+   Manrope Regular 12/14/32; Manrope Medium 16/18; H1 32/36. */
+#s-redeem,#barcodeModal,#claimSheet{font-family:var(--font-ui);font-style:normal;letter-spacing:0}
+#s-redeem .redeem-nav{font-size:16px;font-weight:500;line-height:normal}
+#redeemState{display:none}
+.redeem-summary h1{font-size:18px;font-weight:500;line-height:normal}
+#s-redeem .redeem-value{font-size:32px;font-weight:400;line-height:36px}
+#s-redeem .redeem-warning p{margin:0;font-size:14px;font-weight:400;line-height:normal}
+.barcode-preview>span,.redeem-label,#s-redeem .redeem-memory{font-size:12px;font-weight:400;line-height:normal;letter-spacing:0}
+#s-redeem .redeem-code,#redeemPin{font-size:18px;font-weight:500;line-height:normal;letter-spacing:0}
+#copyPin,.redeem-help,#redeemFlower,.barcode-error{font-size:14px;font-weight:400;line-height:normal;letter-spacing:0}
+#copyCertificate{font-size:16px;font-weight:500;line-height:normal}
+.barcode-full-content h2,#barcodeFullCode,#barcodeFullPin{font-size:18px;font-weight:500;line-height:normal;letter-spacing:0}
+.barcode-full-amount{font-size:32px;font-weight:400;line-height:36px}
+.barcode-full-content>span{font-size:14px;font-weight:400;line-height:normal}
+.claim-sheet h2{font-size:32px;line-height:36px;font-weight:400;letter-spacing:0}
+.claim-eyebrow,.claim-num{font-size:12px;font-weight:400;line-height:normal;letter-spacing:0}
+.claim-intro,.claim-effects p,.claim-error{font-size:14px;font-weight:400;line-height:normal}
+.claim-effects h3{font-size:18px;font-weight:500;line-height:normal}
+.claim-secondary{font-size:16px;font-weight:500;line-height:normal}
+
+#s-redeem .redeem-nav{position:relative;justify-content:flex-start}
+#s-redeem .redeem-nav>span:not(#redeemState){position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap}
 </style>
 </body>
 </html>
