@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261114-certificate-simple5';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261114-certificate-notice6';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -738,7 +738,7 @@ p,h1,h2{margin:0}
           <div><h1>Золотое Яблоко</h1><p class="redeem-value">15 000 ₽</p></div>
         </div>
       </header>
-      <aside class="redeem-warning" id="redeemWarning"><p>Когда используешь сертификат, цветок замрёт: полив и тесты станут недоступны.</p></aside>
+      <aside class="redeem-warning" id="redeemWarning"><span class="redeem-warning-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5"/><circle cx="12" cy="17.5" r=".8" fill="currentColor" stroke="none"/></svg></span><div><h2>Цветок замрёт</h2><p>Когда используешь сертификат, полив и тесты станут недоступны. Цветок останется у тебя на память.</p></div></aside>
       <div class="redeem-card">
         <div id="redeemData">
           <button class="barcode-preview" id="enlargeBarcode" aria-label="Увеличить штрихкод"><img class="redeem-barcode" id="redeemBarcode" alt="Штрихкод сертификата" hidden><span>Нажми на штрихкод, чтобы увеличить</span></button>
@@ -746,9 +746,8 @@ p,h1,h2{margin:0}
           <p class="redeem-label">Код сертификата</p>
           <p class="redeem-code" id="redeemCode"></p>
           <button class="cta" id="copyCertificate"><span class="lbl">Скопировать код</span><span class="ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg></span></button>
-          <div class="redeem-pin-row" id="redeemPinRow" hidden><div><span class="redeem-label">ПИН-код</span><span id="redeemPin"></span></div><button id="copyPin">Скопировать ПИН</button></div>
         </div>
-        <details class="redeem-help"><summary>Как использовать сертификат</summary><p id="redeemInstructions">Покажи штрихкод на кассе или введи код и ПИН при оплате на сайте магазина.</p></details>
+        <details class="redeem-help"><summary>Как использовать сертификат</summary><p id="redeemInstructions">Покажи штрихкод на кассе или введи код при оплате на сайте магазина.</p></details>
       </div>
       <p class="redeem-memory" hidden>Цветок сохранён на память. Полив и тесты больше недоступны.</p>
       <div class="redeem-footer"><button id="redeemFlower">Вернуться к цветку</button></div>
@@ -756,7 +755,7 @@ p,h1,h2{margin:0}
   </section>
   <section class="barcode-modal" id="barcodeModal" role="dialog" aria-modal="true" aria-labelledby="barcodeTitle" hidden>
     <button class="roundbtn" id="closeBarcode" aria-label="Закрыть штрихкод"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-    <div class="barcode-full-content"><h2 id="barcodeTitle">Золотое Яблоко</h2><p class="barcode-full-amount">15 000 ₽</p><img id="barcodeFullImage" alt="Штрихкод сертификата для сканирования"><p id="barcodeFullCode"></p><p id="barcodeFullPin"></p><span>Покажи штрихкод кассиру</span></div>
+    <div class="barcode-full-content"><h2 id="barcodeTitle">Золотое Яблоко</h2><p class="barcode-full-amount">15 000 ₽</p><img id="barcodeFullImage" alt="Штрихкод сертификата для сканирования"><p id="barcodeFullCode"></p><span>Покажи штрихкод кассиру</span></div>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1168,7 +1167,6 @@ p,h1,h2{margin:0}
       id:'prototype-ga-15000',
       code:'9400150008264713',
       displayCode:'9400 1500 0826 4713',
-      pin:'4821',
       barcodeImageUrl:'media/certificate-barcode.svg',
       instructions:'Покажи штрихкод на кассе или введи код сертификата при оплате на сайте «Золотого Яблока».'
     });
@@ -1196,8 +1194,6 @@ p,h1,h2{margin:0}
     $('s-redeem').querySelector('.redeem-memory').hidden=!giftClaimed;
     $('redeemCode').textContent=certificate.displayCode||certificate.code||'';
     $('copyCertificate').hidden=!certificate.code;
-    $('redeemPinRow').hidden=!certificate.pin;
-    $('redeemPin').textContent=certificate.pin||'';
     const barcode=$('redeemBarcode');barcode.hidden=true;barcode.removeAttribute('src');
     $('enlargeBarcode').hidden=true;$('barcodeError').hidden=true;
     if(certificate.barcodeImageUrl){
@@ -1207,7 +1203,7 @@ p,h1,h2{margin:0}
         }
       }catch(_){}
     }
-    $('redeemInstructions').textContent=certificate.instructions||'Покажи штрихкод на кассе или введи код и ПИН при оплате на сайте магазина.';
+    $('redeemInstructions').textContent=certificate.instructions||'Покажи штрихкод на кассе или введи код при оплате на сайте магазина.';
     go('s-redeem',true);$('s-redeem').querySelector('.scroll').scrollTop=0;
     $('redeemBack').focus({preventScroll:true});
   }
@@ -1254,10 +1250,10 @@ p,h1,h2{margin:0}
   $('redeemFlower').addEventListener('click',()=>{go('s-app');showTab('t-home');if(giftClaimed)$('vHome').pause()});
   async function runCertificateAction(action){
     if(action==='barcode'){openBarcode();return;}
-    const pin=action==='copy-pin',value=activeCertificate&&(pin?activeCertificate.pin:activeCertificate.code);
+    const value=activeCertificate&&activeCertificate.code;
     if(!value)return;
-    try{await navigator.clipboard.writeText(value);toast(pin?'ПИН скопирован':'Код скопирован')}
-    catch(_){const range=document.createRange();range.selectNodeContents($(pin?'redeemPin':'redeemCode'));const selection=getSelection();selection.removeAllRanges();selection.addRange(range);toast(pin?'ПИН выделен — скопируй его':'Код выделен — скопируй его')}
+    try{await navigator.clipboard.writeText(value);toast('Код скопирован')}
+    catch(_){const range=document.createRange();range.selectNodeContents($('redeemCode'));const selection=getSelection();selection.removeAllRanges();selection.addRange(range);toast('Код выделен — скопируй его')}
   }
   function openBarcode(){
     const source=$('redeemBarcode');
@@ -1265,7 +1261,6 @@ p,h1,h2{margin:0}
     barcodeReturnFocus=document.activeElement;
     $('barcodeFullImage').src=source.src;
     $('barcodeFullCode').textContent=activeCertificate.displayCode||activeCertificate.code||'';
-    $('barcodeFullPin').textContent=activeCertificate.pin?'ПИН: '+activeCertificate.pin:'';
     $('barcodeModal').hidden=false;
     document.documentElement.style.setProperty('--recipient-top-color','#ffffff');
     document.querySelector('meta[name="theme-color"]').content='#ffffff';
@@ -1278,7 +1273,6 @@ p,h1,h2{margin:0}
     if(barcodeReturnFocus&&barcodeReturnFocus.isConnected)barcodeReturnFocus.focus({preventScroll:true});
   }
   $('copyCertificate').addEventListener('click',()=>runCertificateAction('copy-code'));
-  $('copyPin').addEventListener('click',()=>runCertificateAction('copy-pin'));
   $('enlargeBarcode').addEventListener('click',()=>runCertificateAction('barcode'));
   $('closeBarcode').addEventListener('click',closeBarcode);
   $('barcodeModal').addEventListener('keydown',e=>{
@@ -1551,7 +1545,6 @@ p,h1,h2{margin:0}
 .redeem-card{margin:20px 16px;padding:20px;background:#fff;border:1px solid #e3d3d0;border-radius:24px}
 .redeem-code{margin:12px 0 20px;font-size:24px;line-height:32px;letter-spacing:.06em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;user-select:all}
 .redeem-barcode{display:block;max-width:100%;max-height:120px;object-fit:contain;margin:0 auto 20px}
-.redeem-pin{font-size:14px;margin-bottom:16px;user-select:all}
 .redeem-instructions{margin-top:16px;font-size:13px;line-height:19px;color:#5e4a53}
 .redeem-memory{margin:0 24px;font-size:13px;line-height:19px;color:#5e4a53}
 .redeem-footer{padding:24px 16px}
@@ -1609,9 +1602,6 @@ p,h1,h2{margin:0}
 .barcode-preview>span{display:block;margin:4px 0 20px;font-size:11px;line-height:16px}
 .redeem-label{display:block;margin:0;font-size:12px;line-height:18px;color:#5e4a53}
 #s-redeem .redeem-code{margin:6px 0 16px;font-size:23px;line-height:30px;letter-spacing:.04em}
-.redeem-pin-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid #e3d3d0}
-#redeemPin{display:block;font-size:18px;line-height:26px;letter-spacing:.08em;user-select:all}
-#copyPin{min-height:44px;padding:8px 0 8px 12px;color:#b23a5e;font-size:13px;line-height:18px;text-align:right}
 .redeem-help{margin-top:18px;border-top:1px solid #e3d3d0;padding-top:12px;color:#5e4a53;font-size:13px;line-height:19px}
 .redeem-help summary{min-height:32px;cursor:pointer;color:#2a1520}
 .redeem-help p{margin:8px 0 0}
@@ -1626,7 +1616,6 @@ p,h1,h2{margin:0}
 .barcode-full-amount{font-size:28px}
 #barcodeFullImage{width:100%;height:180px;object-fit:contain;background:#fff}
 #barcodeFullCode{font-size:22px;line-height:30px;letter-spacing:.04em;overflow-wrap:anywhere;user-select:all}
-#barcodeFullPin{font-size:18px;user-select:all}
 .barcode-full-content>span{font-size:14px;color:#5e4a53}
 @media(min-width:501px){#s-redeem .redeem-header{padding-top:70px}}
 @media(max-width:500px){
@@ -1643,10 +1632,10 @@ p,h1,h2{margin:0}
 #s-redeem .redeem-value{font-size:32px;font-weight:400;line-height:36px}
 #s-redeem .redeem-warning p{margin:0;font-size:14px;font-weight:400;line-height:normal}
 .barcode-preview>span,.redeem-label,#s-redeem .redeem-memory{font-size:12px;font-weight:400;line-height:normal;letter-spacing:0}
-#s-redeem .redeem-code,#redeemPin{font-size:18px;font-weight:500;line-height:normal;letter-spacing:0}
-#copyPin,.redeem-help,#redeemFlower,.barcode-error{font-size:14px;font-weight:400;line-height:normal;letter-spacing:0}
+#s-redeem .redeem-code{font-size:18px;font-weight:500;line-height:normal;letter-spacing:0}
+.redeem-help,#redeemFlower,.barcode-error{font-size:14px;font-weight:400;line-height:normal;letter-spacing:0}
 #copyCertificate{font-size:16px;font-weight:500;line-height:normal}
-.barcode-full-content h2,#barcodeFullCode,#barcodeFullPin{font-size:18px;font-weight:500;line-height:normal;letter-spacing:0}
+.barcode-full-content h2,#barcodeFullCode{font-size:18px;font-weight:500;line-height:normal;letter-spacing:0}
 .barcode-full-amount{font-size:32px;font-weight:400;line-height:36px}
 .barcode-full-content>span{font-size:14px;font-weight:400;line-height:normal}
 .claim-sheet h2{font-size:32px;line-height:36px;font-weight:400;letter-spacing:0}
@@ -1657,6 +1646,25 @@ p,h1,h2{margin:0}
 
 #s-redeem .redeem-nav{position:relative;justify-content:flex-start}
 #s-redeem .redeem-nav>span:not(#redeemState){position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap}
+
+/* Заметное предупреждение: Manrope Medium 18 и Regular 14 из Figma. */
+#s-redeem .redeem-warning{
+ display:flex;align-items:flex-start;gap:12px;padding:18px 16px;
+ background:#2a1520;border:1px solid #b8325a;border-radius:20px;
+ box-shadow:0 6px 18px rgba(178,58,94,.12);color:#fff
+}
+.redeem-warning-icon{
+ width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;
+ background:#fdf0f3;color:#b23a5e;border-radius:50%
+}
+#s-redeem .redeem-warning h2{
+ margin:0 0 6px;font-family:var(--font-ui);font-size:18px;font-weight:500;
+ font-style:normal;line-height:normal;letter-spacing:0;color:#fff
+}
+#s-redeem .redeem-warning p{
+ margin:0;font-family:var(--font-ui);font-size:14px;font-weight:400;
+ font-style:normal;line-height:normal;letter-spacing:0;color:rgba(255,255,255,.82)
+}
 </style>
 </body>
 </html>
