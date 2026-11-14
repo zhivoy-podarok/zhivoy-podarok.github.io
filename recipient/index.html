@@ -738,7 +738,7 @@ p,h1,h2{margin:0}
           <div><h1>Золотое Яблоко</h1><p class="redeem-value">15 000 ₽</p></div>
         </div>
       </header>
-      <aside class="redeem-warning" id="redeemWarning"><span class="redeem-warning-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5"/><circle cx="12" cy="17.5" r=".8" fill="currentColor" stroke="none"/></svg></span><div><h2>Цветок замрёт</h2><p>Когда используешь сертификат, полив и тесты станут недоступны. Цветок останется у тебя на память.</p></div></aside>
+      <aside class="redeem-warning" id="redeemWarning"><span class="redeem-warning-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-5-8-11-1-6 3-7 3-2 11 3 7 1 7 10 5 9-1 7 0 7-9 0-9 1-6-6-8-6 0Z"/><circle cx="12" cy="13" r="3"/></svg></span><div><h2>Цветок будет на паузе</h2><p>После получения сертификата полив и тесты приостановятся до обновления страницы.</p></div></aside>
       <div class="redeem-card">
         <div id="redeemData">
           <button class="barcode-preview" id="enlargeBarcode" aria-label="Увеличить штрихкод"><img class="redeem-barcode" id="redeemBarcode" alt="Штрихкод сертификата" hidden><span>Нажми на штрихкод, чтобы увеличить</span></button>
@@ -1644,23 +1644,23 @@ p,h1,h2{margin:0}
 #s-redeem .redeem-nav{position:relative;justify-content:flex-start}
 #s-redeem .redeem-nav>span:not(#redeemState){position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap}
 
-/* Заметное предупреждение: Manrope Medium 18 и Regular 14 из Figma. */
+/* Мягкое уведомление о паузе цветка. */
 #s-redeem .redeem-warning{
- display:flex;align-items:flex-start;gap:12px;padding:18px 16px;
- background:#2a1520;border:1px solid #b8325a;border-radius:20px;
- box-shadow:0 6px 18px rgba(178,58,94,.12);color:#fff
+ display:flex;align-items:flex-start;gap:12px;padding:16px;
+ background:#f1e5e5;border:0;border-radius:18px;
+ box-shadow:none;color:#2a1520
 }
 .redeem-warning-icon{
- width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;
- background:#fdf0f3;color:#b23a5e;border-radius:50%
+ width:22px;height:22px;flex:none;display:flex;align-items:center;justify-content:center;
+ background:none;color:#b23a5e;border-radius:0
 }
 #s-redeem .redeem-warning h2{
- margin:0 0 6px;font-family:var(--font-ui);font-size:18px;font-weight:500;
- font-style:normal;line-height:normal;letter-spacing:0;color:#fff
+ margin:0 0 6px;font-family:var(--font-ui);font-size:16px;font-weight:500;
+ font-style:normal;line-height:22px;letter-spacing:0;color:#2a1520
 }
 #s-redeem .redeem-warning p{
  margin:0;font-family:var(--font-ui);font-size:14px;font-weight:400;
- font-style:normal;line-height:normal;letter-spacing:0;color:rgba(255,255,255,.82)
+ font-style:normal;line-height:21px;letter-spacing:0;color:#5e4a53
 }
 </style>
 </body>
