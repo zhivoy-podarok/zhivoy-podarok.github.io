@@ -1663,5 +1663,130 @@ p,h1,h2{margin:0}
  font-style:normal;line-height:21px;letter-spacing:0;color:#5e4a53
 }
 </style>
+
+<!-- desktop-figma-1530-36525 -->
+<style id="desktop-figma-layout">
+/* Keep mobile Figma appearance/animation. Desktop changes only. */
+.desktop-brand,.desktop-page-title,.desktop-gene-list{display:none}
+@media(min-width:501px) and (max-width:1023px){
+body{background:#faf5f1;padding:0}
+.fit{width:100vw;height:100dvh;transform:none!important}
+.phone{width:100%;height:100%;border-radius:0;box-shadow:none}
+#s-app .tabbar{left:50%;right:auto;width:min(500px,calc(100% - 32px));transform:translateX(-50%);padding-bottom:28px}
+#t-home .hero{height:calc(100dvh - 200px);min-height:440px}
+.design-dark-header{margin-top:0;padding-top:0}
+}
+@media(min-width:1024px){
+:root{color-scheme:light}
+html,body{height:100%;background:#faf5f1}
+body{display:block;padding:0;overflow:hidden}
+.fit{width:100vw;height:100dvh;transform:none!important}
+.phone{width:100%;height:100%;border-radius:0;box-shadow:none;background:#faf5f1}
+.phone>.status,.phone>.home{display:none}
+#s-app,#s-app .tab{background:#faf5f1}
+#s-app .tab .scroll{left:clamp(300px,24.17vw,348px);right:clamp(32px,4.17vw,60px);top:clamp(56px,6.3vh,92px);bottom:32px;overflow-y:auto;overflow-x:hidden;padding:0!important;background-color:#faf5f1;color:#2a1520}
+#s-app .tabbar{position:absolute;left:clamp(32px,4.17vw,60px);top:clamp(56px,9.5vh,92px);right:auto;bottom:clamp(32px,9vh,90px);width:248px;padding:78px 16px 16px;border:1px solid #e3d3d0;border-radius:28px;background:#faf5f1;box-shadow:0 12px 28px rgba(60,20,40,.06);z-index:20}
+#s-app .tabbar::before,#s-app .tabs .ind{display:none!important}
+.desktop-brand{display:block;position:absolute;top:24px;left:24px;font:600 25px/32px "Cormorant Garamond",Georgia,serif;color:#45172d}
+.desktop-brand::first-letter{color:#b8325a}
+#s-app .tabs{display:flex;flex-direction:column;gap:4px;padding:0;background:none;border:0;border-radius:0;box-shadow:none;transform:none}
+#s-app .tabs button{display:flex;flex:none;flex-direction:row;justify-content:flex-start;align-items:center;gap:12px;min-height:48px;padding:0 12px;border-radius:14px;font:500 16px/20px var(--font-ui);text-align:left;color:#2a1520;transition:background .22s ease,transform .2s var(--ease)}
+#s-app .tabs button svg{flex:none;width:24px;height:24px}
+#s-app .tabs button.on{background:#e8dad6}
+#s-app .tabs button:hover:not(.on){background:#f0e6e2}
+#s-app .tabs button:active{transform:scale(.98)}
+#t-home .scroll{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:44px auto auto;gap:16px;align-content:start}
+.desktop-page-title{display:block;font:300 26px/36px var(--font-ui);letter-spacing:-.58px;color:#2a1520}
+#t-home .desktop-page-title{grid-column:1;grid-row:1;align-self:center}
+#t-home .hero{grid-column:1;grid-row:2;margin:0!important;width:100%;height:min(64vh,560px);min-height:420px;border-radius:28px;background:#22101a}
+#t-home .hero canvas{-webkit-mask-image:none;mask-image:none}
+#t-home .hero-top{position:fixed;top:clamp(56px,6.3vh,92px);right:clamp(32px,4.17vw,60px);left:auto;width:auto;gap:12px;z-index:5}
+#t-home .hero-top .pill{height:36px;background:#e8dad6;color:#2a1520}
+#t-home #ticketBtn{background:#e8dad6;border:0}
+#t-home #ticketBtn svg{stroke:#2a1520}
+#t-home .water{grid-column:1;grid-row:3;min-height:142px;margin:0!important;padding:24px;border:0;border-radius:28px;background:#fff;box-shadow:0 2px 12px rgba(60,20,40,.05)}
+#t-home #waterBtn{top:23px;right:24px}
+#t-dna .design-dark-header,#t-tests .design-dark-header{margin:0;padding:34px 24px 26px;background:radial-gradient(ellipse at 50% 30%,#52223b,#29141f 65%,#22101a);border-radius:0 0 28px 28px;color:#fff}
+#t-dna .page-head,#t-tests .page-head{padding:0 0 20px}
+#t-dna .page-head .h1,#t-tests .page-head .h1{font:300 26px/30px var(--font-ui)}
+#t-dna .effects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:0}
+#t-dna .effects .glass{grid-column:auto;width:auto;margin:0}
+#t-dna #dnaList{padding:28px 0;max-width:none}
+#t-dna #dnaList [data-g]{transition:transform .24s var(--ease),box-shadow .24s}
+#t-dna #dnaList [data-g]:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(60,20,40,.07)}
+#t-tests .tests{display:flex;flex-direction:column;gap:18px;padding:24px 0}
+#t-tests .titem{min-width:0}
+#t-tests .tav{max-width:none}
+#t-share .scroll{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);align-content:start;gap:24px;padding-bottom:0!important;bottom:32px!important}
+#t-share .design-dark-header{grid-column:1;grid-row:1 / span 2;background:none;margin:0;padding:0;color:#2a1520;border-radius:0}
+#t-share .page-head{padding:0 0 16px}
+#t-share .page-head .h1{font:300 26px/30px var(--font-ui)}
+#t-share .sharecard{width:min(100%,460px);height:auto;aspect-ratio:307/426;margin:0}
+#t-share .sharecard .img{width:calc(100% - 26px);height:calc(100% - 26px)}
+#t-share .sharecard .name{top:auto;bottom:28px}
+#t-share .views{grid-column:2;grid-row:1;align-self:start;margin:46px 0 0;padding:20px}
+#shareAct{left:auto;right:clamp(32px,4.17vw,60px);bottom:auto!important;top:clamp(320px,40vh,390px);width:calc((100vw - clamp(300px,24.17vw,348px) - clamp(32px,4.17vw,60px) - 24px)*.53)}
+#shareAct .cta{width:100%}
+#t-quiz .scroll{padding:16px!important}
+#t-quiz .deck,#t-quiz .answer{max-width:520px;margin-left:auto;margin-right:auto}
+#t-quiz .qact{left:clamp(300px,24.17vw,348px);right:clamp(32px,4.17vw,60px);bottom:50px}
+.modal{left:50%;right:auto;width:min(460px,calc(100% - 40px));transform:translate(-50%,-40%)}
+.modal.on{transform:translate(-50%,-50%)}
+.claim-sheet{left:50%;right:auto;bottom:50%;width:min(520px,calc(100% - 40px));transform:translate(-50%,50%);border-radius:28px;animation:none}
+#barcodeModal{left:50%;right:auto;width:min(640px,100%);transform:translateX(-50%)}
+}
+@media(min-width:1440px){
+#t-home .scroll{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);grid-template-rows:44px 146px minmax(0,auto);column-gap:24px;row-gap:16px}
+#t-home .desktop-page-title{grid-column:1 / -1}
+#t-home .hero{grid-column:1;grid-row:2 / span 2;height:min(65vh,600px);min-height:480px}
+#t-home .water{grid-column:2;grid-row:2;min-height:140px}
+#t-home #waterBtn{top:22px}
+.desktop-gene-list{display:flex;grid-column:2;grid-row:3;flex-direction:column;gap:10px;min-width:0}
+.desktop-gene-heading{display:flex;justify-content:space-between;align-items:center;font-size:16px;margin-bottom:4px}
+.desktop-gene-heading button{font-size:14px;color:#5e4a53}
+.desktop-gene-card{display:flex;align-items:center;gap:12px;min-height:100px;padding:14px;border:1px solid #e3d3d0;border-radius:22px;background:#fff;color:#2a1520;text-align:left;transition:transform .22s var(--ease),box-shadow .22s}
+.desktop-gene-card:first-of-type{background:radial-gradient(ellipse at 60% 0,#4b1b34,#22101a 75%);border-color:#e7a5b8;color:#fff}
+.desktop-gene-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(60,20,40,.09)}
+.desktop-gene-level{width:38px;height:38px;flex:none;border:2px solid #e3d3d0;border-radius:50%;display:grid;place-items:center}
+.desktop-gene-card strong{display:block;font-size:16px;font-weight:500}
+.desktop-gene-card small{display:block;margin-top:3px;font-size:12px;opacity:.7}
+.desktop-gene-card em{font-style:normal;margin-left:auto;font-size:15px}
+#t-tests .tests{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+#t-tests .titem{display:block}
+#t-tests .titem .rail{width:100%;display:flex;align-items:center}
+#t-tests .titem .rail u{flex:1}
+#t-tests .tav,#t-tests .tlock{width:100%}
+#t-tests .titem .tlock{background:none;border:0;box-shadow:none}
+}
+@media(prefers-reduced-motion:reduce){.desktop-gene-card,#s-app .tabs button{transition:none}}
+</style>
+<script id="desktop-figma-script">
+(function(){
+const tabs=document.getElementById('tabs');
+if(!tabs)return;
+const brand=document.createElement('span');brand.className='desktop-brand';brand.textContent='Дариум';tabs.parentNode.appendChild(brand);
+const home=document.querySelector('#t-home .scroll');
+const title=document.createElement('h1');title.className='desktop-page-title';title.textContent='Мой цветок';home.insertBefore(title,home.firstChild);
+const genes=document.createElement('section');genes.className='desktop-gene-list';genes.setAttribute('aria-label','Гены');home.appendChild(genes);
+function updateGenes(){
+ if(innerWidth<1440)return;
+ const cards=Array.from(document.querySelectorAll('#dnaList [data-g]')).slice(0,3);
+ genes.innerHTML='<div class="desktop-gene-heading"><span>Гены</span><button type="button" data-open-dna>Подробнее　›</button></div>';
+ cards.forEach((c,i)=>{
+  const name=c.querySelector('.acc')?.textContent||c.querySelector('.top div span:not(.chip)')?.textContent||'Ген';
+  const desc=c.querySelector('.top .xs')?.textContent||'';
+  const percent=c.querySelector('.pct')?.textContent||'';
+  const b=document.createElement('button');b.type='button';b.className='desktop-gene-card';
+  b.innerHTML='<span class="desktop-gene-level">1</span><span><strong></strong><small></small></span><em></em>';
+  b.querySelector('strong').textContent=name;b.querySelector('small').textContent=desc;b.querySelector('em').textContent=percent;
+  b.addEventListener('click',()=>tabs.querySelector('[data-t="t-dna"]').click());genes.appendChild(b);
+ });
+}
+genes.addEventListener('click',e=>{if(e.target.closest('[data-open-dna]'))tabs.querySelector('[data-t="t-dna"]').click()});
+const dna=document.getElementById('dnaList');if(dna)new MutationObserver(updateGenes).observe(dna,{childList:true});
+addEventListener('resize',updateGenes);updateGenes();
+})();
+</script>
+
 </body>
 </html>
