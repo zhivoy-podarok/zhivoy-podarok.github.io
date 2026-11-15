@@ -1837,7 +1837,24 @@ addEventListener('resize',updateGenes);updateGenes();
 @keyframes certFade{from{opacity:0}to{opacity:1}}
 @keyframes ownedCertIn{from{opacity:0;transform:translate(-50%,calc(-50% + 18px)) scale(.985)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @media(min-width:1024px){.owned-cert-modal{max-width:550px}}
-@media(max-width:500px){.owned-cert-modal{max-height:calc(100% - 32px);padding:24px 20px 20px}.owned-cert-bars{height:84px}}
+@media(max-width:500px){
+.owned-cert-modal{left:0;right:0;top:clamp(38px,6.8vh,58px);bottom:0;width:100%;max-width:none;max-height:none;transform:none;padding:12px 22px calc(28px + env(safe-area-inset-bottom,0px));border-radius:36px 36px 0 0;animation:ownedCertMobileIn .33s var(--ease) both}
+.owned-cert-close{width:42px;height:42px;margin:0 -10px 12px auto}
+.owned-cert-modal h2{font-size:26px;line-height:30px}
+.owned-cert-description{font-size:14px;line-height:20px;margin:12px 0 20px}
+.owned-cert-white{padding:20px;border-radius:24px}
+.owned-cert-brand-row{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+.owned-cert-brand-row img{width:100%;height:auto;aspect-ratio:2.15/1;object-fit:cover;border-radius:20px}
+.owned-cert-brand-row div{display:flex;flex-direction:row;justify-content:space-between;align-items:center;gap:8px}
+.owned-cert-brand-row span{font-size:14px}
+.owned-cert-brand-row strong{font-size:18px}
+.owned-cert-bars{height:88px;max-width:100%;margin:22px auto 12px}
+.owned-cert-code-label{font-size:12px}
+.owned-cert-code{font-size:18px}
+.owned-cert-notice{margin:12px 0 20px}
+.owned-cert-copy{height:52px}
+}
+@keyframes ownedCertMobileIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.owned-cert-shade,.owned-cert-modal{animation:none}.owned-cert-close,.owned-cert-copy{transition:none}}
 </style>
 <script id="owned-cert-figma-behaviour">
