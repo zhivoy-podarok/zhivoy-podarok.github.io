@@ -758,6 +758,50 @@ p,h1,h2{margin:0}
     <div class="barcode-full-content"><h2 id="barcodeTitle">Золотое Яблоко</h2><p class="barcode-full-amount">15 000 ₽</p><img id="barcodeFullImage" alt="Штрихкод сертификата для сканирования"><p id="barcodeFullCode"></p><span>Покажи штрихкод кассиру</span></div>
   </section>
 
+  <!-- Figma 1530:37177, 1530:37249: mobile certificate overlay -->
+  <div class="recipient-cert-layer" id="recipientCertLayer" hidden>
+    <div class="recipient-cert-backdrop" id="recipientCertBackdrop"></div>
+    <section class="recipient-cert-panel" id="recipientCertPanel" role="dialog" aria-modal="true" aria-labelledby="recipientCertHeading" aria-describedby="recipientCertIntro" tabindex="-1">
+      <div class="recipient-cert-header">
+        <button class="recipient-cert-dismiss" type="button" id="recipientCertDismiss" aria-label="Закрыть сертификат">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="recipient-cert-body">
+        <div class="recipient-cert-heading">
+          <h2 id="recipientCertHeading">Твой сертификат</h2>
+          <p id="recipientCertIntro">Код и штрихкод всегда доступны. Воспользоваться ими можно в любой момент.</p>
+        </div>
+        <div class="recipient-cert-details">
+          <div class="recipient-cert-white">
+            <div class="recipient-cert-brand">
+              <img id="recipientCertBrandImage" src="media/brand_big_ga.jpg?v=1792574895" alt="Золотое Яблоко">
+              <div class="recipient-cert-amount"><span>Номинал</span><b id="recipientCertAmount">15 000 ₽</b></div>
+            </div>
+            <img class="recipient-cert-barcode" id="recipientCertBarcode" src="media/certificate-barcode.svg" alt="Штрихкод сертификата">
+            <div class="recipient-cert-code-wrap">
+              <span>Код сертификата</span>
+              <strong id="recipientCertCode">9400 1500 0826 4713</strong>
+            </div>
+          </div>
+          <aside class="recipient-cert-notice">
+            <span class="recipient-cert-flower" id="recipientCertFlower" aria-hidden="true"></span>
+            <div><h3>После использования сертификата:</h3><p>Развитие цветка завершится. Полив, тесты и новые гены станут недоступны.</p></div>
+          </aside>
+        </div>
+      </div>
+      <div class="recipient-cert-bottom">
+        <button class="recipient-cert-copy" type="button" id="recipientCertCopy">
+          <span id="recipientCertCopyLabel">Скопировать код</span>
+          <span class="recipient-cert-icon">
+            <svg id="recipientCertCopyGlyph" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+            <svg id="recipientCertCheckGlyph" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="m5 12 4.5 4.5L19 7"/></svg>
+          </span>
+        </button>
+        <span class="recipient-cert-home-indicator" aria-hidden="true"></span>
+      </div>
+    </section>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="home"></div>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3d1"/><stop offset=".45" stop-color="#f4cf7c"/><stop offset="1" stop-color="#e0a24f"/></linearGradient></defs></svg>
@@ -1663,5 +1707,99 @@ p,h1,h2{margin:0}
  font-style:normal;line-height:21px;letter-spacing:0;color:#5e4a53
 }
 </style>
+
+<style id="recipient-mobile-certificate-figma">
+/* Mobile source of truth: Figma 1530:37177 and 1530:37249 (393×852). */
+@media (max-width:500px){
+ #t-home .hero-top .pill{background:#e8dad6!important;border-color:#e3d3d0!important;color:#2a1520!important;box-shadow:none}
+ #t-home #ticketBtn{background:#e8dad6!important;border:1px solid #e3d3d0!important;color:#2a1520!important}
+ #t-home #ticketBtn svg{stroke:#2a1520!important}
+}
+.recipient-cert-layer[hidden],.recipient-cert-check[hidden]{display:none!important}
+.recipient-cert-layer{position:absolute;inset:0;z-index:110;color:#2a1520;font-family:var(--font-ui)}
+.recipient-cert-backdrop{position:absolute;inset:0;background:rgba(40,18,30,.5);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);animation:recipientCertShade .25s ease both}
+.recipient-cert-panel{position:absolute;left:0;right:0;top:57px;bottom:0;background:#faf5f1;border-radius:36px 36px 0 0;padding:12px 12px 0;display:flex;flex-direction:column;overflow:hidden;animation:recipientCertEnter .35s var(--ease) both}
+.recipient-cert-header{flex:none;width:100%;height:42px;display:flex;justify-content:flex-end}
+.recipient-cert-dismiss{width:42px;height:42px;border-radius:50%;background:#e8dad6;border:1px solid #e3d3d0;display:flex;align-items:center;justify-content:center;color:#2a1520;transition:transform .2s,background .2s}
+.recipient-cert-dismiss:hover{background:#dfd0cd}.recipient-cert-dismiss:active{transform:scale(.92)}
+.recipient-cert-body{padding:6px 10px 0;overflow-y:auto;min-height:0;scrollbar-width:none;flex:1}
+.recipient-cert-body::-webkit-scrollbar{display:none}
+.recipient-cert-heading{display:flex;flex-direction:column;gap:12px;width:100%}
+.recipient-cert-heading h2{font:300 26px/30px var(--font-ui);letter-spacing:-.58px;color:#2a1520}
+.recipient-cert-heading p{font:400 14px/normal var(--font-ui);color:#5e4a53}
+.recipient-cert-details{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.recipient-cert-white{display:flex;flex-direction:column;gap:12px;width:100%;padding:20px;background:#fff;border-radius:24px}
+.recipient-cert-brand{display:flex;flex-direction:column;gap:8px}
+.recipient-cert-brand img{display:block;width:100%;height:178px;object-fit:cover;border-radius:20px}
+.recipient-cert-amount{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.recipient-cert-amount span{font:400 14px/normal var(--font-ui);color:#5e4a53}
+.recipient-cert-amount b{font:500 18px/normal var(--font-ui);color:#2a1520}
+.recipient-cert-barcode{display:block;width:100%;height:108px;object-fit:contain}
+.recipient-cert-code-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.recipient-cert-code-wrap span{font:400 12px/normal var(--font-ui);color:#5e4a53}
+.recipient-cert-code-wrap strong{font:500 16px/normal var(--font-ui);color:#2a1520;white-space:nowrap}
+.recipient-cert-notice{display:flex;align-items:flex-start;gap:12px;width:100%;padding:16px;border-radius:18px;background:#f1e5e5}
+.recipient-cert-flower{width:24px;height:24px;flex:none;color:#b8325a;display:block}
+.recipient-cert-flower svg{display:block;width:24px;height:24px;stroke:#b8325a}
+.recipient-cert-notice div{min-width:0;display:flex;flex-direction:column;gap:4px}
+.recipient-cert-notice h3{margin:0;font:500 16px/normal var(--font-ui);color:#2a1520}
+.recipient-cert-notice p{margin:0;font:400 14px/normal var(--font-ui);color:#5e4a53}
+.recipient-cert-bottom{flex:none;margin-top:auto;padding:20px 8px 0;width:100%;height:108px;position:relative;background:#faf5f1}
+.recipient-cert-copy{display:flex;align-items:center;justify-content:center;position:relative;width:100%;height:48px;border-radius:100px;background:linear-gradient(90deg,#b8325a,#d9645a);font:500 16px/normal var(--font-ui);color:#fff;box-shadow:0 8px 20px rgba(178,58,94,.24);transition:transform .22s,box-shadow .22s}
+.recipient-cert-copy:hover{box-shadow:0 10px 25px rgba(178,58,94,.28)}
+.recipient-cert-copy:active{transform:scale(.985)}
+.recipient-cert-icon{position:absolute;right:4px;top:4px;width:40px;height:40px;border-radius:50%;background:#faf5f1;color:#2a1520;display:flex;align-items:center;justify-content:center}
+.recipient-cert-icon svg[hidden]{display:none!important}
+.recipient-cert-home-indicator{position:absolute;bottom:8px;width:139px;height:5px;border-radius:5px;background:#2a1520;left:50%;transform:translateX(-50%)}
+@keyframes recipientCertShade{from{opacity:0}to{opacity:1}}
+@keyframes recipientCertEnter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:501px){.recipient-cert-panel{width:393px;height:795px;top:50%;bottom:auto;left:50%;right:auto;transform:translate(-50%,-50%);animation:none}.recipient-cert-layer{background:rgba(40,18,30,.45)}}
+@media(max-width:500px){.recipient-cert-panel{top:57px}.recipient-cert-bottom{padding-bottom:env(safe-area-inset-bottom,0px)}}
+@media(max-height:800px){.recipient-cert-panel{top:calc(var(--top,0px) + 36px)}.recipient-cert-bottom{height:104px}}
+@media(prefers-reduced-motion:reduce){.recipient-cert-backdrop,.recipient-cert-panel{animation:none}.recipient-cert-dismiss,.recipient-cert-copy{transition:none}}
+</style>
+<script id="recipient-mobile-certificate-script">
+(function(){
+const byId=id=>document.getElementById(id);
+const button=byId('ticketBtn'),overlay=byId('recipientCertLayer'),panel=byId('recipientCertPanel');
+if(!button||!overlay||!panel)return;
+const navFlower=document.querySelector('#tabs button[data-t="t-home"] svg');
+if(navFlower){const flower=navFlower.cloneNode(true);flower.removeAttribute('width');flower.removeAttribute('height');flower.setAttribute('aria-hidden','true');byId('recipientCertFlower').appendChild(flower)}
+let lastFocus=null,certCode='';
+function close(){overlay.hidden=true;document.body.classList.remove('recipient-cert-open');if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true})}
+function show(data){
+ certCode=String(data.code||'');
+ byId('recipientCertCode').textContent=data.displayCode||certCode.replace(/(\d{4})(?=\d)/g,'$1 ').trim()||'—';
+ byId('recipientCertAmount').textContent=data.amount||'15 000 ₽';
+ byId('recipientCertCopy').disabled=!certCode;
+ byId('recipientCertCopyLabel').textContent='Скопировать код';
+ byId('recipientCertCopyGlyph').hidden=false;
+ byId('recipientCertCheckGlyph').hidden=true;
+ if(data.barcodeImageUrl){try{const u=new URL(data.barcodeImageUrl,location.href);if(u.origin===location.origin||u.protocol==='https:')byId('recipientCertBarcode').src=u.href}catch(_){}}
+ if(data.brandImageUrl){try{const u=new URL(data.brandImageUrl,location.href);if(u.origin===location.origin||u.protocol==='https:')byId('recipientCertBrandImage').src=u.href}catch(_){}}
+ lastFocus=document.activeElement;overlay.hidden=false;document.body.classList.add('recipient-cert-open');panel.querySelector('.recipient-cert-body').scrollTop=0;byId('recipientCertDismiss').focus({preventScroll:true});
+}
+button.addEventListener('click',async e=>{
+ e.preventDefault();e.stopImmediatePropagation();
+ try{
+ const provider=window.recipientCertificateProvider;
+ const giftId=new URLSearchParams(location.search).get('gift')||'recipient-preview';
+ const data=typeof provider==='function'?await provider({action:'read',giftId}):{code:'9400150008264713',displayCode:'9400 1500 0826 4713',barcodeImageUrl:'media/certificate-barcode.svg',amount:'15 000 ₽'};
+ if(!data||(!data.code&&!data.barcodeImageUrl))throw Error('CERTIFICATE_UNAVAILABLE');
+ show(data);
+ }catch(_){const toast=byId('toast');if(toast){toast.textContent='Сертификат сейчас недоступен';toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),2200)}}
+},true);
+byId('recipientCertDismiss').addEventListener('click',close);
+byId('recipientCertBackdrop').addEventListener('click',close);
+document.addEventListener('keydown',e=>{if(overlay.hidden)return;if(e.key==='Escape'){e.preventDefault();close()}if(e.key==='Tab'){const focusable=Array.from(panel.querySelectorAll('button:not(:disabled)'));const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}},true);
+byId('recipientCertCopy').addEventListener('click',async()=>{
+ if(!certCode)return;
+ try{await navigator.clipboard.writeText(certCode)}
+ catch(_){const range=document.createRange();range.selectNodeContents(byId('recipientCertCode'));const selection=getSelection();selection.removeAllRanges();selection.addRange(range);return}
+ byId('recipientCertCopyLabel').textContent='Код скопирован';
+ byId('recipientCertCopyGlyph').hidden=true;byId('recipientCertCheckGlyph').hidden=false;
+});
+})();
+</script>
 </body>
 </html>
