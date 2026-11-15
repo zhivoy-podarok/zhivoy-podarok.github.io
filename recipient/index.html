@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261115-snackbars4';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261115-disable-claim5';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -566,7 +566,7 @@ p,h1,h2{margin:0}
       </div>
     <div class="cert-bot">
       <button class="cta" id="toApp"><span class="lbl">Начать жить с цветком</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></span></button>
-      <button class="ghost" id="takeNow">Забрать подарок сейчас</button>
+      <button class="ghost" id="takeNow" type="button" disabled aria-disabled="true">Забрать подарок сейчас</button>
     </div>
       </div>
 </section>
@@ -925,7 +925,7 @@ p,h1,h2{margin:0}
 
   /* ---------- 2 · certificate ---------- */
   $('toApp').addEventListener('click',()=>go('s-app'));
-  $('takeNow').addEventListener('click',openClaim);
+  // Получение сертификата до начала жизни цветка отключено: кнопка не запускает сценарий.
 
   /* ---------- 3 · tabs ---------- */
   let curTab='t-home';
