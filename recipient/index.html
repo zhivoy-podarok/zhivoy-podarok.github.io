@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261115-certificate-figma-mobile2';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261115-certificate-slideup3';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -1718,7 +1718,7 @@ p,h1,h2{margin:0}
 .recipient-cert-layer[hidden],.recipient-cert-check[hidden]{display:none!important}
 .recipient-cert-layer{position:absolute;inset:0;z-index:110;color:#2a1520;font-family:var(--font-ui)}
 .recipient-cert-backdrop{position:absolute;inset:0;background:rgba(40,18,30,.5);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);animation:recipientCertShade .25s ease both}
-.recipient-cert-panel{position:absolute;left:0;right:0;top:57px;bottom:0;background:#faf5f1;border-radius:36px 36px 0 0;padding:12px 12px 0;display:flex;flex-direction:column;overflow:hidden;animation:recipientCertEnter .35s var(--ease) both}
+.recipient-cert-panel{position:absolute;left:0;right:0;top:57px;bottom:0;background:#faf5f1;border-radius:36px 36px 0 0;padding:12px 12px 0;display:flex;flex-direction:column;overflow:hidden;animation:recipientCertEnter .55s cubic-bezier(.22,1,.36,1) both}
 .recipient-cert-header{flex:none;width:100%;height:42px;display:flex;justify-content:flex-end}
 .recipient-cert-dismiss{width:42px;height:42px;border-radius:50%;background:#e8dad6;border:1px solid #e3d3d0;display:flex;align-items:center;justify-content:center;color:#2a1520;transition:transform .2s,background .2s}
 .recipient-cert-dismiss:hover{background:#dfd0cd}.recipient-cert-dismiss:active{transform:scale(.92)}
@@ -1753,11 +1753,15 @@ p,h1,h2{margin:0}
 .recipient-cert-icon svg[hidden]{display:none!important}
 .recipient-cert-home-indicator{position:absolute;bottom:8px;width:139px;height:5px;border-radius:5px;background:#2a1520;left:50%;transform:translateX(-50%)}
 @keyframes recipientCertShade{from{opacity:0}to{opacity:1}}
-@keyframes recipientCertEnter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes recipientCertEnter{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes recipientCertExit{from{transform:translateY(0)}to{transform:translateY(100%)}}
+@keyframes recipientCertShadeOut{from{opacity:1}to{opacity:0}}
+.recipient-cert-layer.is-closing .recipient-cert-panel{animation:recipientCertExit .36s cubic-bezier(.4,0,.8,.4) both}
+.recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .36s ease both}
 @media(min-width:501px){.recipient-cert-panel{width:393px;height:795px;top:50%;bottom:auto;left:50%;right:auto;transform:translate(-50%,-50%);animation:none}.recipient-cert-layer{background:rgba(40,18,30,.45)}}
 @media(max-width:500px){.recipient-cert-panel{top:57px}.recipient-cert-bottom{padding-bottom:env(safe-area-inset-bottom,0px)}}
 @media(max-height:800px){.recipient-cert-panel{top:calc(var(--top,0px) + 36px)}.recipient-cert-bottom{height:104px}}
-@media(prefers-reduced-motion:reduce){.recipient-cert-backdrop,.recipient-cert-panel{animation:none}.recipient-cert-dismiss,.recipient-cert-copy{transition:none}}
+@media(prefers-reduced-motion:reduce){.recipient-cert-backdrop,.recipient-cert-panel,.recipient-cert-layer.is-closing .recipient-cert-panel,.recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:none}.recipient-cert-dismiss,.recipient-cert-copy{transition:none}}
 </style>
 <script id="recipient-mobile-certificate-script">
 (function(){
@@ -1766,8 +1770,19 @@ const button=byId('ticketBtn'),overlay=byId('recipientCertLayer'),panel=byId('re
 if(!button||!overlay||!panel)return;
 const navFlower=document.querySelector('#tabs button[data-t="t-home"] svg');
 if(navFlower){const flower=navFlower.cloneNode(true);flower.removeAttribute('width');flower.removeAttribute('height');flower.setAttribute('aria-hidden','true');byId('recipientCertFlower').appendChild(flower)}
-let lastFocus=null,certCode='';
-function close(){overlay.hidden=true;document.body.classList.remove('recipient-cert-open');if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true})}
+let lastFocus=null,certCode='',closeTimer=null;
+function finishClose(){
+ clearTimeout(closeTimer);closeTimer=null;
+ overlay.hidden=true;overlay.classList.remove('is-closing');
+ document.body.classList.remove('recipient-cert-open');
+ if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});
+}
+function close(){
+ if(overlay.hidden||overlay.classList.contains('is-closing'))return;
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches||matchMedia('(min-width:501px)').matches){finishClose();return}
+ overlay.classList.add('is-closing');
+ closeTimer=setTimeout(finishClose,390);
+}
 function show(data){
  certCode=String(data.code||'');
  byId('recipientCertCode').textContent=data.displayCode||certCode.replace(/(\d{4})(?=\d)/g,'$1 ').trim()||'—';
@@ -1778,7 +1793,7 @@ function show(data){
  byId('recipientCertCheckGlyph').hidden=true;
  if(data.barcodeImageUrl){try{const u=new URL(data.barcodeImageUrl,location.href);if(u.origin===location.origin||u.protocol==='https:')byId('recipientCertBarcode').src=u.href}catch(_){}}
  if(data.brandImageUrl){try{const u=new URL(data.brandImageUrl,location.href);if(u.origin===location.origin||u.protocol==='https:')byId('recipientCertBrandImage').src=u.href}catch(_){}}
- lastFocus=document.activeElement;overlay.hidden=false;document.body.classList.add('recipient-cert-open');panel.querySelector('.recipient-cert-body').scrollTop=0;byId('recipientCertDismiss').focus({preventScroll:true});
+ clearTimeout(closeTimer);closeTimer=null;overlay.classList.remove('is-closing');lastFocus=document.activeElement;overlay.hidden=false;document.body.classList.add('recipient-cert-open');panel.querySelector('.recipient-cert-body').scrollTop=0;byId('recipientCertDismiss').focus({preventScroll:true});
 }
 button.addEventListener('click',async e=>{
  e.preventDefault();e.stopImmediatePropagation();
