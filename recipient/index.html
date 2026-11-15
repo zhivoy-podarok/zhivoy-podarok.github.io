@@ -1788,5 +1788,105 @@ addEventListener('resize',updateGenes);updateGenes();
 })();
 </script>
 
+
+<!-- Figma 1530:37636 — in-app certificate overlay; independent of the claim flow. -->
+<div class="owned-cert-shade" id="figmaOwnedCertShade" hidden></div>
+<section class="owned-cert-modal" id="figmaOwnedCertModal" role="dialog" aria-modal="true" aria-labelledby="figmaCertTitle" hidden tabindex="-1">
+  <button type="button" class="owned-cert-close" id="figmaCertClose" aria-label="Закрыть сертификат">×</button>
+  <h2 id="figmaCertTitle">Твой сертификат</h2>
+  <p class="owned-cert-description">Код и штрихкод всегда доступны. Воспользоваться ими можно в любой момент.</p>
+  <div class="owned-cert-white">
+    <div class="owned-cert-brand-row">
+      <img id="figmaCertBrand" src="media/brand_big_ga.jpg?v=1792574895" alt="Золотое Яблоко">
+      <div><span>Номинал</span><strong id="figmaCertAmount">15 000 ₽</strong></div>
+    </div>
+    <img id="figmaCertBarcode" class="owned-cert-bars" alt="Штрихкод сертификата" src="media/certificate-barcode.svg">
+    <div class="owned-cert-code-label">Код сертификата</div>
+    <p id="figmaCertCode" class="owned-cert-code">9400 1500 0826 4713</p>
+  </div>
+  <aside class="owned-cert-notice">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 8c-5-8-11-1-6 3-7 3-2 11 3 7 1 7 10 5 9-1 7 0 7-9 0-9 1-6-6-8-6 0Z"/><circle cx="12" cy="13" r="3"/></svg>
+    <div><h3>После использования сертификата:</h3><p>Развитие цветка завершится. Полив, тесты и новые гены станут недоступны.</p></div>
+  </aside>
+  <button class="owned-cert-copy" id="figmaCertCopy" type="button"><span>Скопировать код</span><span class="owned-cert-copy-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg></span></button>
+</section>
+<style id="owned-cert-figma-styles">
+.owned-cert-shade{position:absolute;inset:0;background:rgba(27,12,23,.52);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);z-index:85;animation:certFade .22s ease both}
+.owned-cert-modal{position:absolute;z-index:86;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 32px);max-width:510px;max-height:calc(100% - 40px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;padding:28px 24px 24px;background:#faf5f1;color:#2a1520;border-radius:36px;box-shadow:0 20px 70px rgba(25,10,20,.18);font-family:var(--font-ui);animation:ownedCertIn .33s var(--ease) both}
+.owned-cert-modal::-webkit-scrollbar{display:none}
+.owned-cert-close{display:flex;align-items:center;justify-content:center;margin:-16px -12px 14px auto;width:44px;height:44px;border:1px solid #e3d3d0;border-radius:50%;background:#e8dad6;color:#2a1520;font:300 30px/1 var(--font-ui);transition:background .2s,transform .2s}
+.owned-cert-close:hover{background:#ded0cc}.owned-cert-close:active{transform:scale(.92)}
+.owned-cert-modal h2{font:300 26px/30px var(--font-ui);letter-spacing:-.58px}
+.owned-cert-description{font:400 14px/20px var(--font-ui);color:#5e4a53;margin:10px 0 20px}
+.owned-cert-white{border-radius:24px;padding:20px;background:#fff;display:flex;flex-direction:column;align-items:center}
+.owned-cert-brand-row{display:flex;align-items:center;gap:12px;width:100%}
+.owned-cert-brand-row img{width:116px;height:68px;border-radius:12px;object-fit:cover}
+.owned-cert-brand-row div{display:flex;flex-direction:column;gap:4px}
+.owned-cert-brand-row span{font-size:12px;color:#5e4a53}
+.owned-cert-brand-row strong{font-size:18px;font-weight:500}
+.owned-cert-bars{width:100%;max-width:310px;height:88px;object-fit:contain;margin:22px auto 12px}
+.owned-cert-code-label{font-size:12px;color:#5e4a53}
+.owned-cert-code{font-size:18px;font-weight:500;margin-top:6px;letter-spacing:0}
+.owned-cert-notice{display:flex;align-items:flex-start;gap:12px;background:#f1e5e5;border-radius:20px;padding:16px;margin:12px 0 20px}
+.owned-cert-notice>svg{flex:none;color:#b8325a}
+.owned-cert-notice h3{font:500 16px/22px var(--font-ui);margin:0 0 6px}
+.owned-cert-notice p{font:400 14px/20px var(--font-ui);margin:0;color:#5e4a53}
+.owned-cert-copy{width:100%;height:52px;display:flex;align-items:center;justify-content:center;position:relative;border-radius:100px;background:linear-gradient(100deg,#b8325a,#d9645a);color:white;font:500 16px var(--font-ui);box-shadow:0 8px 16px rgba(178,58,94,.2);transition:transform .2s,box-shadow .2s}
+.owned-cert-copy:hover{box-shadow:0 12px 22px rgba(178,58,94,.27)}.owned-cert-copy:active{transform:scale(.985)}
+.owned-cert-copy-icon{position:absolute;right:6px;top:6px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:#2a1520;background:#faf5f1}
+@keyframes certFade{from{opacity:0}to{opacity:1}}
+@keyframes ownedCertIn{from{opacity:0;transform:translate(-50%,calc(-50% + 18px)) scale(.985)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@media(min-width:1024px){.owned-cert-modal{max-width:550px}}
+@media(max-width:500px){.owned-cert-modal{max-height:calc(100% - 32px);padding:24px 20px 20px}.owned-cert-bars{height:84px}}
+@media(prefers-reduced-motion:reduce){.owned-cert-shade,.owned-cert-modal{animation:none}.owned-cert-close,.owned-cert-copy{transition:none}}
+</style>
+<script id="owned-cert-figma-behaviour">
+(function(){
+const byId=id=>document.getElementById(id);
+const openButton=byId('ticketBtn'),shade=byId('figmaOwnedCertShade'),modal=byId('figmaOwnedCertModal');
+if(!openButton||!shade||!modal)return;
+let focusBack=null,code='';
+const isSafeImage=url=>{try{const u=new URL(url,location.href);return u.protocol==='https:'||(u.protocol==='http:'&&u.origin===location.origin)?u.href:null}catch(_){return null}};
+function close(){shade.hidden=true;modal.hidden=true;if(focusBack?.isConnected)focusBack.focus({preventScroll:true})}
+function open(data){
+ code=data.code||'';
+ byId('figmaCertCode').textContent=data.displayCode||code||'Код недоступен';
+ byId('figmaCertCopy').disabled=!code;
+ const src=isSafeImage(data.barcodeImageUrl||'');
+ byId('figmaCertBarcode').hidden=!src;if(src)byId('figmaCertBarcode').src=src;
+ if(data.brandImageUrl){const brand=isSafeImage(data.brandImageUrl);if(brand)byId('figmaCertBrand').src=brand}
+ if(data.amount)byId('figmaCertAmount').textContent=data.amount;
+ focusBack=document.activeElement;shade.hidden=false;modal.hidden=false;
+ byId('figmaCertClose').focus({preventScroll:true});
+}
+openButton.addEventListener('click',async e=>{
+ e.preventDefault();e.stopImmediatePropagation();
+ let data;
+ try{
+  const params=new URLSearchParams(location.search);
+  const provider=window.recipientCertificateProvider;
+  data=typeof provider==='function'?await provider({action:'read',giftId:params.get('gift')||'recipient-preview'}):{
+    code:'9400150008264713',displayCode:'9400 1500 0826 4713',barcodeImageUrl:'media/certificate-barcode.svg'
+  };
+  if(!data||(!data.code&&!data.barcodeImageUrl))throw new Error('CERTIFICATE_UNAVAILABLE');
+  open(data);
+ }catch(_){const toast=byId('toast');if(toast){toast.textContent='Сертификат сейчас недоступен';toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),2400)}}
+},true);
+byId('figmaCertClose').addEventListener('click',close);
+shade.addEventListener('click',close);
+modal.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){e.preventDefault();close()}
+ if(e.key==='Tab'){const nodes=[...modal.querySelectorAll('button:not([disabled])')];const a=nodes[0],b=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus()}else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus()}}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
+byId('figmaCertCopy').addEventListener('click',async()=>{
+ if(!code)return;
+ try{await navigator.clipboard.writeText(code);byId('figmaCertCopy').querySelector('span').textContent='Код скопирован';
+ setTimeout(()=>byId('figmaCertCopy').querySelector('span').textContent='Скопировать код',1800)}
+ catch(_){const range=document.createRange();range.selectNodeContents(byId('figmaCertCode'));const sel=getSelection();sel.removeAllRanges();sel.addRange(range)}
+});
+})();
+</script>
+
 </body>
 </html>
