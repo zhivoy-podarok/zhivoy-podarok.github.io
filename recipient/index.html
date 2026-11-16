@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261116-mobile-preview-desktop2';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261116-mobile-preview-desktop3';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -1731,11 +1731,10 @@ p,h1,h2{margin:0}
 
 <style id="recipient-mobile-certificate-figma">
 /* Mobile source of truth: Figma 1530:37177 and 1530:37249 (393×852). */
-@media (max-width:500px){
- #t-home .hero-top .pill{background:#e8dad6!important;border-color:#e3d3d0!important;color:#2a1520!important;box-shadow:none}
- #t-home #ticketBtn{background:#e8dad6!important;border:1px solid #e3d3d0!important;color:#2a1520!important}
- #t-home #ticketBtn svg{stroke:#2a1520!important}
-}
+/* Same Figma mobile colors in the actual phone and in desktop phone preview. */
+#t-home .hero-top .pill{background:#e8dad6!important;border-color:#e3d3d0!important;color:#2a1520!important;box-shadow:none}
+#t-home #ticketBtn{background:#e8dad6!important;border:1px solid #e3d3d0!important;color:#2a1520!important}
+#t-home #ticketBtn svg{stroke:#2a1520!important}
 .recipient-cert-layer[hidden],.recipient-cert-check[hidden]{display:none!important}
 .recipient-cert-layer{position:absolute;inset:0;z-index:110;color:#2a1520;font-family:var(--font-ui)}
 .recipient-cert-backdrop{position:absolute;inset:0;background:rgba(40,18,30,.5);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);animation:recipientCertShade .25s ease both}
