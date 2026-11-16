@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261116-gene-icon-palette1';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261116-modal-close-fast2';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -1779,16 +1779,16 @@ p,h1,h2{margin:0}
 @keyframes recipientCertEnter{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes recipientCertExit{from{transform:translateY(0)}to{transform:translateY(100%)}}
 @keyframes recipientCertShadeOut{from{opacity:1}to{opacity:0}}
-.recipient-cert-layer.is-closing .recipient-cert-panel{animation:recipientCertExit .36s cubic-bezier(.4,0,.8,.4) both}
-.recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .36s ease both}
+.recipient-cert-layer.is-closing .recipient-cert-panel{animation:recipientCertExit .22s cubic-bezier(.4,0,.8,.4) both}
+.recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .22s ease both}
 .recipient-cert-layer.is-dragging .recipient-cert-panel{animation:none!important;transition:none!important}
 .recipient-cert-layer.is-dragging .recipient-cert-backdrop{animation:none!important}
 .recipient-cert-layer.is-swipe-closing .recipient-cert-panel{
   animation:none!important;
   transform:translateY(100%)!important;
-  transition:transform .32s cubic-bezier(.4,0,.8,.4)!important
+  transition:transform .22s cubic-bezier(.4,0,.8,.4)!important
 }
-.recipient-cert-layer.is-swipe-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .32s ease both}
+.recipient-cert-layer.is-swipe-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .22s ease both}
 .recipient-cert-layer.is-swipe-returning .recipient-cert-panel{
   animation:none!important;
   transform:translateY(0)!important;
@@ -1835,7 +1835,7 @@ function close(){
  if(overlay.hidden||overlay.classList.contains('is-closing'))return;
  if(matchMedia('(prefers-reduced-motion:reduce)').matches){finishClose();return}
  overlay.classList.add('is-closing');
- closeTimer=setTimeout(finishClose,390);
+ closeTimer=setTimeout(finishClose,240);
 }
 function show(data){
  certCode=String(data.code||'');
@@ -1870,7 +1870,7 @@ const moveGesture=(y,event)=>{
  const g=sheetGesture;if(!g||!g.canDrag)return;
  const delta=y-g.startY;
  if(!g.dragging){
-  if(delta<12)return;
+  if(delta<6)return;
   g.dragging=true;
   clearTimeout(returnTimer);overlay.classList.remove('is-swipe-returning');
   overlay.classList.add('is-dragging');
@@ -1884,14 +1884,14 @@ const endGesture=(y)=>{
  if(!g||!g.dragging)return;
  const dy=Math.max(0,y-g.startY);
  const elapsed=Math.max(1,performance.now()-g.startTime);
- if(dy>110||(dy>45&&dy/elapsed>.65)){
+ if(dy>85||(dy>35&&dy/elapsed>.55)){
    // Preserve the released position until the closing transition takes over.
    panel.style.transform='translateY('+dy+'px)';
    void panel.offsetWidth;
    overlay.classList.add('is-swipe-closing');
    overlay.classList.remove('is-dragging');
    clearTimeout(closeTimer);
-   closeTimer=setTimeout(finishClose,340);
+   closeTimer=setTimeout(finishClose,240);
  }else{
    overlay.classList.add('is-swipe-returning');
    overlay.classList.remove('is-dragging');
