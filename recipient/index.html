@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261116-cert-swipe5';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261116-gene-icon-palette1';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -701,7 +701,7 @@ p,h1,h2{margin:0}
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
       <div style="display:flex"><button class="roundbtn x" id="mClose" aria-label="Закрыть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
       <div class="body">
-        <svg class="sprout" width="90" height="90" viewBox="0 0 90 90" fill="none"><circle cx="45" cy="45" r="38.9" fill="#0F261D" stroke="#fff" stroke-opacity=".12" stroke-width="6.1"/><path class="stem" d="M45 60.75V45M45 45c0-7-5.25-10.5-12.25-10.5 0 7 5.25 10.5 12.25 10.5Zm0 0c0-7 5.25-10.5 12.25-10.5 0 7-5.25 10.5-12.25 10.5Z" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/></svg>
+        <svg class="sprout" width="90" height="90" viewBox="0 0 90 90" fill="none" aria-hidden="true"><circle cx="45" cy="45" r="38.9" fill="#F1E5E5"/><g stroke="#B23A5E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M45 62C34 58 27 50 25 39c12 0 19 7 20 23Z"/><path d="M45 62c11-4 18-12 20-23-12 0-19 7-20 23Z"/><path d="M45 62c-8-13-8-24 0-37 8 13 8 24 0 37Z"/></g></svg>
         <div><span class="chip">НОВЫЙ ГЕН</span><h2 id="mTitle">Уверенность</h2><p class="sub">Этот ген занял свободный слот в ДНК твоего цветка — первый из трёх, который ты создаёшь сам.</p></div>
         <button class="cta" id="mGo"><span class="lbl">К цветку</span><span class="ic"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"><path d="M5.83 14.17 14.17 5.83M5.83 5.83h8.34v8.34"/></svg></span></button>
       </div>
@@ -1931,6 +1931,10 @@ byId('recipientCertCopy').addEventListener('click',async()=>{
 });
 })();
 </script>
+<style id="gene-result-palette-20261116">
+/* Only the gene result badge color changes; all dimensions and animation remain unchanged. */
+#modal .body .chip{background:#fdf0f3;color:#b23a5e}
+</style>
 <style id="recipient-figma-snackbar-20261115">
 /* Figma 1530:37352 snackbar shared by flower, tests and watering. */
 #toast.toast{
