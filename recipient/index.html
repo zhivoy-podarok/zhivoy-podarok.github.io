@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261116-desktop-modal-fix1';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261116-mobile-preview-desktop2';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -1782,7 +1782,15 @@ p,h1,h2{margin:0}
 @keyframes recipientCertShadeOut{from{opacity:1}to{opacity:0}}
 .recipient-cert-layer.is-closing .recipient-cert-panel{animation:recipientCertExit .36s cubic-bezier(.4,0,.8,.4) both}
 .recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .36s ease both}
-@media(min-width:501px){.recipient-cert-panel{width:393px;height:795px;top:50%;bottom:auto;left:50%;right:auto;transform:translate(-50%,-50%);animation:none}.recipient-cert-layer{background:rgba(40,18,30,.45)}}
+/* Desktop is only a scaled 393×852 mobile prototype, never a desktop layout. */
+@media(min-width:501px){
+  .recipient-cert-layer{position:absolute;inset:0;background:transparent}
+  .recipient-cert-panel{
+    left:0;right:0;top:57px;bottom:0;width:100%;height:auto;max-width:none;
+    transform:none;border-radius:36px 36px 0 0;
+    animation:recipientCertEnter .55s cubic-bezier(.22,1,.36,1) both
+  }
+}
 @media(max-width:500px){.recipient-cert-panel{top:57px}.recipient-cert-bottom{padding-bottom:env(safe-area-inset-bottom,0px)}}
 @media(max-width:500px) and (max-height:800px){.recipient-cert-panel{top:calc(var(--top,0px) + 36px)}.recipient-cert-bottom{height:104px}}
 @media(prefers-reduced-motion:reduce){.recipient-cert-backdrop,.recipient-cert-panel,.recipient-cert-layer.is-closing .recipient-cert-panel,.recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:none}.recipient-cert-dismiss,.recipient-cert-copy{transition:none}}
@@ -1805,7 +1813,7 @@ function finishClose(){
 }
 function close(){
  if(overlay.hidden||overlay.classList.contains('is-closing'))return;
- if(matchMedia('(prefers-reduced-motion:reduce)').matches||matchMedia('(min-width:501px)').matches){finishClose();return}
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches){finishClose();return}
  overlay.classList.add('is-closing');
  closeTimer=setTimeout(finishClose,390);
 }
