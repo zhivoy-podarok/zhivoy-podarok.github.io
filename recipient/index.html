@@ -1884,16 +1884,17 @@ const endGesture=(y)=>{
  if(!g||!g.dragging)return;
  const dy=Math.max(0,y-g.startY);
  const elapsed=Math.max(1,performance.now()-g.startTime);
- overlay.classList.remove('is-dragging');
  if(dy>110||(dy>45&&dy/elapsed>.65)){
+   // Preserve the released position until the closing transition takes over.
    panel.style.transform='translateY('+dy+'px)';
-   // The browser animates from the release position, rather than snapping to the top.
    void panel.offsetWidth;
    overlay.classList.add('is-swipe-closing');
+   overlay.classList.remove('is-dragging');
    clearTimeout(closeTimer);
    closeTimer=setTimeout(finishClose,340);
  }else{
    overlay.classList.add('is-swipe-returning');
+   overlay.classList.remove('is-dragging');
    panel.style.transform='';
    clearTimeout(returnTimer);
    returnTimer=setTimeout(()=>overlay.classList.remove('is-swipe-returning'),310);
