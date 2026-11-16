@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261116-mobile-preview-desktop3';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261116-cert-fit-preview4';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -1789,6 +1789,14 @@ p,h1,h2{margin:0}
     transform:none;border-radius:36px 36px 0 0;
     animation:recipientCertEnter .55s cubic-bezier(.22,1,.36,1) both
   }
+  /* In the fixed 393×852 desktop preview the certificate is one complete screen.
+     Tighten internal whitespace instead of clipping the notice behind the bottom CTA. */
+  .recipient-cert-body{overflow:hidden;flex:1 1 auto}
+  .recipient-cert-details{margin-top:16px;gap:10px}
+  .recipient-cert-white{padding:16px 20px;gap:8px}
+  .recipient-cert-brand{gap:6px}
+  .recipient-cert-barcode{height:100px}
+  .recipient-cert-notice{padding:14px 16px}
 }
 @media(max-width:500px){.recipient-cert-panel{top:57px}.recipient-cert-bottom{padding-bottom:env(safe-area-inset-bottom,0px)}}
 @media(max-width:500px) and (max-height:800px){.recipient-cert-panel{top:calc(var(--top,0px) + 36px)}.recipient-cert-bottom{height:104px}}
