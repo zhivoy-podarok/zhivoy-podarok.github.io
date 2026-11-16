@@ -12,7 +12,7 @@
 <meta property="og:description" content="Прижми палец к куполу — и цветок раскроется">
 <meta property="og:image" content="https://zhivoy-podarok.github.io/img/og.jpg">
 <script>
-(function(){var V='20261116-cert-fit-preview4';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
+(function(){var V='20261116-cert-swipe5';fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();
 if(t&&t!==V){var u=new URL(location.href);if(u.searchParams.get('v')!==t){u.searchParams.set('v',t);location.replace(u.toString());}}}).catch(function(){});})();
 </script>
 </head>
@@ -1781,6 +1781,19 @@ p,h1,h2{margin:0}
 @keyframes recipientCertShadeOut{from{opacity:1}to{opacity:0}}
 .recipient-cert-layer.is-closing .recipient-cert-panel{animation:recipientCertExit .36s cubic-bezier(.4,0,.8,.4) both}
 .recipient-cert-layer.is-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .36s ease both}
+.recipient-cert-layer.is-dragging .recipient-cert-panel{animation:none!important;transition:none!important}
+.recipient-cert-layer.is-dragging .recipient-cert-backdrop{animation:none!important}
+.recipient-cert-layer.is-swipe-closing .recipient-cert-panel{
+  animation:none!important;
+  transform:translateY(100%)!important;
+  transition:transform .32s cubic-bezier(.4,0,.8,.4)!important
+}
+.recipient-cert-layer.is-swipe-closing .recipient-cert-backdrop{animation:recipientCertShadeOut .32s ease both}
+.recipient-cert-layer.is-swipe-returning .recipient-cert-panel{
+  animation:none!important;
+  transform:translateY(0)!important;
+  transition:transform .28s cubic-bezier(.22,1,.36,1)!important
+}
 /* Desktop is only a scaled 393×852 mobile prototype, never a desktop layout. */
 @media(min-width:501px){
   .recipient-cert-layer{position:absolute;inset:0;background:transparent}
@@ -1814,7 +1827,7 @@ function resetCopyState(){clearTimeout(copyResetTimer);copyResetTimer=null;byId(
 function finishClose(){
  resetCopyState();
  clearTimeout(closeTimer);closeTimer=null;
- overlay.hidden=true;overlay.classList.remove('is-closing');
+ overlay.hidden=true;overlay.classList.remove('is-closing','is-dragging','is-swipe-closing','is-swipe-returning');panel.style.transform='';
  document.body.classList.remove('recipient-cert-open');
  if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});
 }
@@ -1832,7 +1845,7 @@ function show(data){
  resetCopyState();
  if(data.barcodeImageUrl){try{const u=new URL(data.barcodeImageUrl,location.href);if(u.origin===location.origin||u.protocol==='https:')byId('recipientCertBarcode').src=u.href}catch(_){}}
  if(data.brandImageUrl){try{const u=new URL(data.brandImageUrl,location.href);if(u.origin===location.origin||u.protocol==='https:')byId('recipientCertBrandImage').src=u.href}catch(_){}}
- clearTimeout(closeTimer);closeTimer=null;overlay.classList.remove('is-closing');lastFocus=document.activeElement;overlay.hidden=false;document.body.classList.add('recipient-cert-open');panel.querySelector('.recipient-cert-body').scrollTop=0;byId('recipientCertDismiss').focus({preventScroll:true});
+ clearTimeout(closeTimer);closeTimer=null;overlay.classList.remove('is-closing','is-dragging','is-swipe-closing','is-swipe-returning');panel.style.transform='';lastFocus=document.activeElement;overlay.hidden=false;document.body.classList.add('recipient-cert-open');panel.querySelector('.recipient-cert-body').scrollTop=0;byId('recipientCertDismiss').focus({preventScroll:true});
 }
 button.addEventListener('click',async e=>{
  e.preventDefault();e.stopImmediatePropagation();
@@ -1844,6 +1857,65 @@ button.addEventListener('click',async e=>{
  show(data);
  }catch(_){const toast=byId('toast');if(toast){toast.textContent='Сертификат сейчас недоступен';toast.classList.add('on');setTimeout(()=>toast.classList.remove('on'),2200)}}
 },true);
+/* Drag the sheet downward to dismiss, while preserving normal scrolling and button taps. */
+let sheetGesture=null,returnTimer=null;
+const body=panel.querySelector('.recipient-cert-body');
+const startGesture=(y,target)=>{
+ if(overlay.hidden||overlay.classList.contains('is-closing')||overlay.classList.contains('is-swipe-closing'))return;
+ if(target.closest('button,a,input,textarea,select,[role="button"]'))return;
+ sheetGesture={startY:y,lastY:y,startTime:performance.now(),dragging:false,
+   canDrag:!body.contains(target)||body.scrollTop<=0};
+};
+const moveGesture=(y,event)=>{
+ const g=sheetGesture;if(!g||!g.canDrag)return;
+ const delta=y-g.startY;
+ if(!g.dragging){
+  if(delta<12)return;
+  g.dragging=true;
+  clearTimeout(returnTimer);overlay.classList.remove('is-swipe-returning');
+  overlay.classList.add('is-dragging');
+ }
+ if(event?.cancelable)event.preventDefault();
+ g.lastY=y;
+ panel.style.transform='translateY('+Math.max(0,delta)+'px)';
+};
+const endGesture=(y)=>{
+ const g=sheetGesture;sheetGesture=null;
+ if(!g||!g.dragging)return;
+ const dy=Math.max(0,y-g.startY);
+ const elapsed=Math.max(1,performance.now()-g.startTime);
+ overlay.classList.remove('is-dragging');
+ if(dy>110||(dy>45&&dy/elapsed>.65)){
+   panel.style.transform='translateY('+dy+'px)';
+   // The browser animates from the release position, rather than snapping to the top.
+   void panel.offsetWidth;
+   overlay.classList.add('is-swipe-closing');
+   clearTimeout(closeTimer);
+   closeTimer=setTimeout(finishClose,340);
+ }else{
+   overlay.classList.add('is-swipe-returning');
+   panel.style.transform='';
+   clearTimeout(returnTimer);
+   returnTimer=setTimeout(()=>overlay.classList.remove('is-swipe-returning'),310);
+ }
+};
+panel.addEventListener('touchstart',e=>{
+ if(e.touches.length!==1)return;
+ startGesture(e.touches[0].clientY,e.target);
+},{passive:true});
+panel.addEventListener('touchmove',e=>{
+ if(e.touches.length!==1)return;
+ moveGesture(e.touches[0].clientY,e);
+},{passive:false});
+panel.addEventListener('touchend',e=>endGesture(e.changedTouches[0]?.clientY??sheetGesture?.lastY??0),{passive:true});
+panel.addEventListener('touchcancel',()=>endGesture(sheetGesture?.startY??0),{passive:true});
+// Mouse-drag support for the centered desktop phone preview.
+panel.addEventListener('pointerdown',e=>{
+ if(e.pointerType!=='mouse'||e.button!==0)return;
+ startGesture(e.clientY,e.target);
+});
+window.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&sheetGesture)moveGesture(e.clientY,e)});
+window.addEventListener('pointerup',e=>{if(e.pointerType==='mouse'&&sheetGesture)endGesture(e.clientY)});
 byId('recipientCertDismiss').addEventListener('click',close);
 byId('recipientCertBackdrop').addEventListener('click',close);
 document.addEventListener('keydown',e=>{if(overlay.hidden)return;if(e.key==='Escape'){e.preventDefault();close()}if(e.key==='Tab'){const focusable=Array.from(panel.querySelectorAll('button:not(:disabled)'));const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}},true);
